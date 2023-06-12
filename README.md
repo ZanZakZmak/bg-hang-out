@@ -1,19 +1,19 @@
-# bg-hang-out
+# BG_HangOut
 
-## Project setup
-```
-npm install
-```
+Web aplikacija za povezivanje ljubitelja stolnih igara, kako bi pronašli igraće za igranje.<br>
+funkcijonalnost ocjenjivanja drugih korisnika, te liste za prikaz dostupih igara.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Autori i zaduženja
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Žan-Žak Žmak (zzmak@unipu.hr) - samostalan rad, implementacija cjele aplikacije
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Javni link na aplikaciju
+
+Web: [Prototip javni link](https://www.figma.com/proto/lZDcbWTy9phAmHzZxfXixL/BGHangOut?node-id=2-2&scaling=min-zoom&page-id=0%3A1)
+
+## Organizacija
+
+[Sveučilište Jurja Dobrile u Puli](https://www.unipu.hr/)<br>
+[Fakultet informatike u Puli](https://fipu.unipu.hr/)<br>
+Programsko inženjerstvo, ak.god. 2021./2022.<br>
+Mentor: Nikola Tanković (https://fipu.unipu.hr/fipu/nikola.tankovic, nikola.tankovic@unipu.hr)<br>
