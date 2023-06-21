@@ -55,6 +55,33 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LandingPageView.vue"),
   },
+  {
+    path: "/board-games",
+    name: "board-games-view",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/BoardGamesView.vue"),
+  },
+  {
+    path: "/board-game-lists",
+    name: "board-game-lists-view",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/BoardGameListsView.vue"),
+  },
+  {
+    path: "/edit-profile",
+    name: "edit-profile-view",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/EditProfileView.vue"),
+  },
 ];
 
 const router = new VueRouter({

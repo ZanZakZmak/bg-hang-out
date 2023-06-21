@@ -4,7 +4,7 @@
 import store from "@/store";
 
 export default {
-  name: "BoardGames",
+  name: "BoardGameLists",
 
   components: {},
   data() {
