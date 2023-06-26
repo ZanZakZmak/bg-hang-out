@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -40,6 +40,7 @@ export {
   collection,
   getDocs,
   getAuth,
+  addDoc,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,

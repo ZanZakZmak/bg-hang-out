@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app>
+  <v-app-bar app dark>
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     <img width="50" height="50" src="@/assets/logo.png" alt="khmmm" />
     <v-spacer></v-spacer>
@@ -15,7 +15,7 @@
 
     <v-spacer></v-spacer>
     <!--lo out has to triger a function-->
-    <v-btn @click="logOut()">
+    <v-btn v-show="store.isAuthenticated" @click="logOut()">
       <v-icon left>mdi-logout-variant</v-icon> <span>Logout</span></v-btn
     >
 
