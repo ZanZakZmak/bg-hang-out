@@ -78,15 +78,24 @@
                     <v-autocomplete
                       v-model="categoriesForm"
                       :items="[
-                        'Skiing',
-                        'Ice hockey',
-                        'Soccer',
-                        'Basketball',
-                        'Hockey',
-                        'Reading',
-                        'Writing',
-                        'Coding',
-                        'Basejump',
+                        'co-op',
+                        'team vs team',
+                        'party',
+                        'eurogame',
+                        'wargame',
+                        'abstract',
+                        'deduction',
+                        'campaign',
+                        'deck builder',
+                        'engine builder',
+                        'dice rolling',
+                        'card draft',
+                        'worker placment',
+                        'dexterity',
+                        'resource management',
+                        'dungeon crawler',
+                        'area control',
+                        'hidden role',
                       ]"
                       label="Interests"
                       multiple
@@ -244,9 +253,11 @@ export default {
   data() {
     return {
       store,
+      //maknut ako ne koristimo explore btn
       show: false,
+      //za toggle dialoga
       dialog: false,
-      // varijable za dodvananje
+      // varijable forme za dodvananje novog bg
       bgImageUrlForm: null,
       bgNameForm: null,
       categoriesForm: null,
@@ -337,7 +348,11 @@ export default {
     },
     searchBoardGame() {
       this.filterdBoardGames = this.boardGames.filter((element) => {
-        return !(element.bgName.search(store.searchTerm) === -1);
+        return !(
+          element.bgName
+            .toLowerCase()
+            .search(store.searchTerm.toLowerCase()) === -1
+        );
       });
     },
     filterBoardGames() {
@@ -428,7 +443,7 @@ export default {
   },
   mounted() {
     this.getBoardgames().then(() => {
-      // zamjenit samo sa direktnim unosom unutra
+      // zamjenit samo sa direktnim unosom unutra mozda dodati automatski kao u sessions
       this.searchBoardGame();
     });
   },

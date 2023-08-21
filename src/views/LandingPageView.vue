@@ -39,6 +39,7 @@ export default {
     return { isAuthenticated: false };
   },
   beforeCreate() {
+    // unesecary remove later
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Authenticated");

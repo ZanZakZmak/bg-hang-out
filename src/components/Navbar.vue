@@ -28,7 +28,9 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>John Leider</v-list-item-title>
+            <v-list-item-title>{{
+              store.storeData.userInfo.userName
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <!--routes-->
@@ -57,7 +59,7 @@ export default {
   props: [""],
 
   data() {
-    console.log("heloo u konzlu :");
+    console.log("heloo u konzlu aaaaa :");
     return {
       store,
       drawer: false,

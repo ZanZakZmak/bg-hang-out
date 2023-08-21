@@ -8,7 +8,16 @@
 </template>
 
 <script>
-import { auth, onAuthStateChanged, getAuth, signOut } from "../firebase.js";
+import {
+  auth,
+  onAuthStateChanged,
+  getAuth,
+  signOut,
+  doc,
+  getDoc,
+  db,
+} from "../firebase.js";
+
 import store from "@/store.js";
 import Navbar from "@/components/Navbar.vue";
 export default {
@@ -19,6 +28,8 @@ export default {
       store,
     };
   },
+  //add to input adisonal user data into store
+  //add to clear adisonal user data into store
   methods: {
     logOut() {
       const auth = getAuth();
@@ -31,15 +42,32 @@ export default {
           console.log("desio se error", error.code);
         });
     },
+    async setStoreUserInfo(userID) {
+      const docRef = doc(db, "users", userID);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        store.storeData.userInfo.userName = docSnap.data().userName;
+        store.storeData.userInfo.userId = docSnap.id;
+        console.log("Document data:", docSnap.data());
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+      }
+    },
   },
   beforeCreate() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Authenticated");
         store.isAuthenticated = true;
+        //add to store fec from firebase
+        this.setStoreUserInfo(user.uid);
       } else {
         console.log("Not Authenticated");
         store.isAuthenticated = false;
+        //remove from store
+        store.storeData.userInfo.userName = "";
       }
     });
   },

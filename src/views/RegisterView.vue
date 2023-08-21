@@ -60,12 +60,19 @@
           </v-card-actions>
         </v-card>
       </v-col>
+      <v-btn @click="saveUserInfoToDatabase('345')"></v-btn>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { auth, createUserWithEmailAndPassword } from "../../firebase.js";
+import {
+  auth,
+  createUserWithEmailAndPassword,
+  doc,
+  setDoc,
+  db,
+} from "../../firebase.js";
 export default {
   name: "Register",
 
@@ -87,6 +94,7 @@ export default {
           /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
           "E-mail must be valid",
       },
+      //user info
     };
   },
   methods: {
@@ -96,15 +104,16 @@ export default {
       this.password = null;
       this.userName = null;
     },
-    registerAddUser() {
+    async registerAddUser() {
       const email = this.email;
       const password = this.password;
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log("uspjesno autentificiran ", user);
+          console.log("uspjesno autentificiran ", user.uid);
           // add user info to colection make the id
+          this.saveUserInfoToDatabase(user.uid);
           this.$router.push({ path: "/" });
         })
         .catch((error) => {
@@ -114,7 +123,17 @@ export default {
           // ..
         });
     },
-    userSaveToDatabase() {},
+    // dodati user info koji je potreban
+    async saveUserInfoToDatabase(idUser) {
+      await setDoc(doc(db, "users", idUser), {
+        email: this.email,
+        password: this.password,
+        userName: this.userName,
+        bgLists: [],
+        createdSessions: [],
+        joinedSessions: [],
+      });
+    },
   },
   mounted() {
     console.log("na register sam ");

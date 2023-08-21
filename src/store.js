@@ -1,4 +1,5 @@
 let storeData = {
+  userInfo: { userName: "", userId: "" },
   boardgames: [
     {
       name: "Arham Horror1",
