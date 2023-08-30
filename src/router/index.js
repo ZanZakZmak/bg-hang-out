@@ -47,6 +47,15 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/SesionsView.vue"),
   },
   {
+    path: "/manage-sessions",
+    name: "manage-sessions-view",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/ManageSessionsView.vue"),
+  },
+  {
     path: "/",
     name: "landingpage-view",
     // route level code-splitting
@@ -72,6 +81,17 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/BoardGameListsView.vue"),
+  },
+  {
+    path: "/board-game-lists/:id",
+    name: "board-game-single-list-view",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/BoardGameSingleListView.vue"
+      ),
   },
   {
     path: "/edit-profile",

@@ -16,9 +16,10 @@
               <span class="text-h5">Create New Session</span>
             </v-card-title>
             <v-card-text>
-              <v-container>
-                <v-row>
-                  <!--
+              <v-form v-model="formValid">
+                <v-container>
+                  <v-row>
+                    <!--
                     title
                     bg id
                     date
@@ -30,111 +31,115 @@
                     user info ID
                     timestamp?
                   -->
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      label="Title*"
-                      v-model="titleForm"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-menu
-                      v-model="menu1"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        label="Title*"
+                        v-model="titleForm"
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        v-model="menu1"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="auto"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="dateForm"
+                            label="Picker without buttons"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker
                           v-model="dateForm"
-                          label="Picker without buttons"
-                          prepend-icon="mdi-calendar"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="dateForm"
-                        @input="menu1 = false"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-menu
-                      ref="menu"
-                      v-model="menu2"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      :return-value.sync="timeForm"
-                      transition="scale-transition"
-                      offset-y
-                      max-width="290px"
-                      min-width="290px"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
+                          @input="menu1 = false"
+                        ></v-date-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-menu
+                        ref="menu"
+                        v-model="menu2"
+                        :close-on-content-click="false"
+                        :nudge-right="40"
+                        :return-value.sync="timeForm"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                            v-model="timeForm"
+                            label="Picker in menu"
+                            prepend-icon="mdi-clock-time-four-outline"
+                            readonly
+                            v-bind="attrs"
+                            v-on="on"
+                            :rules="[rules.required]"
+                          ></v-text-field>
+                        </template>
+                        <v-time-picker
+                          v-if="menu2"
                           v-model="timeForm"
-                          label="Picker in menu"
-                          prepend-icon="mdi-clock-time-four-outline"
-                          readonly
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-time-picker
-                        v-if="menu2"
-                        v-model="timeForm"
-                        format="24hr"
-                        full-width
-                        @click:minute="$refs.menu.save(timeForm)"
-                      ></v-time-picker>
-                    </v-menu>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-text-field
-                      label=" Number of players you want*"
-                      v-model="numOfPlayersForm"
-                      hint="etc. 1..."
-                      type="number"
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-text-field
-                      label="Comunication link*"
-                      v-model="ComunicationLinkForm"
-                      hint=" skipe link, discord link..."
-                      required
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-textarea
-                      label="Aditional notes"
-                      v-model="notesform"
-                      hint="Hint text"
-                    ></v-textarea>
-                  </v-col>
+                          format="24hr"
+                          full-width
+                          @click:minute="$refs.menu.save(timeForm)"
+                        ></v-time-picker>
+                      </v-menu>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-text-field
+                        label=" Number of players you want*"
+                        v-model="numOfPlayersForm"
+                        hint="etc. 1..."
+                        type="number"
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-text-field
+                        label="Comunication link*"
+                        v-model="ComunicationLinkForm"
+                        hint=" skipe link, discord link..."
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-textarea
+                        label="Aditional notes"
+                        v-model="notesform"
+                        hint="Hint text"
+                      ></v-textarea>
+                    </v-col>
 
-                  <v-col cols="12" sm="6">
-                    <v-autocomplete
-                      v-model="bgIdForm"
-                      :items="dialogBgOptions"
-                      label="Board game"
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-text-field
-                      label="Location*"
-                      v-model="locationForm"
-                      hint=" Rijeka, Pula link..."
-                      required
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
+                    <v-col cols="12" sm="6">
+                      <v-autocomplete
+                        v-model="bgIdForm"
+                        :items="dialogBgOptions"
+                        label="Board game"
+                        :rules="[rules.required]"
+                      ></v-autocomplete>
+                    </v-col>
+                    <v-col cols="12" sm="6">
+                      <v-text-field
+                        label="Location*"
+                        v-model="locationForm"
+                        hint=" Rijeka, Pula link..."
+                        :rules="[rules.required]"
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
               <small>*indicates required field</small>
             </v-card-text>
             <v-card-actions>
@@ -142,8 +147,13 @@
               <v-btn color="blue darken-1" text @click="closeDialogSession()">
                 Close
               </v-btn>
-              <v-btn color="blue darken-1" text @click="addNewSession()">
-                Save
+              <v-btn
+                :disabled="isFormButtonDisabled"
+                color="blue darken-1"
+                text
+                @click="addNewSession()"
+              >
+                Create
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -162,46 +172,57 @@
             class="mx-auto mb-4"
             max-width="400"
             dark
-            v-for="sesion in sessionsFilterd"
-            :key="sesion.seshId"
-            v-show="sesion.show"
+            v-for="session in sessionsFilterd"
+            :key="session.seshId"
+            v-show="session.show"
           >
-            <v-img :src="sesion.bgInfo.bgImage" height="150px"></v-img>
+            <v-img :src="session.bgInfo.bgImage" height="150px"></v-img>
 
-            <v-card-title> {{ sesion.title }} </v-card-title>
+            <v-card-title> {{ session.title }} </v-card-title>
 
             <v-card-subtitle align="center" justify="center">
-              Board Game {{ sesion.bgInfo.bgName }}
+              Board Game {{ session.bgInfo.bgName }}
             </v-card-subtitle>
             <v-divider></v-divider>
             <v-list-item>
               <v-list-item-content>
-                <v-list-item-title>Date: {{ sesion.date }}</v-list-item-title>
-                <v-list-item-title>Time: {{ sesion.time }}</v-list-item-title>
+                <v-list-item-title>Date: {{ session.date }}</v-list-item-title>
+                <v-list-item-title>Time: {{ session.time }}</v-list-item-title>
                 <v-list-item-title
-                  >Location: {{ sesion.location }}</v-list-item-title
+                  >Location: {{ session.location }}</v-list-item-title
                 >
                 <v-divider inset></v-divider>
                 <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
             <v-divider></v-divider>
+
             <v-card-subtitle>Curently joined </v-card-subtitle>
-            <v-card-subtitle
-              class="pa-0"
-              v-for="person in sesion.joinedPlayers"
-              :key="person.guestId"
-            >
-              imena {{ person.userName }}
+            <v-card-subtitle class="pa-0 ma-1">
+              <v-chip
+                class="ma-2"
+                color="teal darken-4"
+                v-for="person in session.joinedPlayers"
+                :key="person.guestId"
+              >
+                <v-avatar left>
+                  <v-icon>mdi-account-circle</v-icon>
+                </v-avatar>
+                {{ person.userName }}
+              </v-chip>
             </v-card-subtitle>
             <v-divider></v-divider>
-            <v-card-subtitle left>heloo</v-card-subtitle>
+            <v-card-subtitle>Aditional notes</v-card-subtitle>
+
+            <v-card-subtitle style="max-height: 100px; overflow-y: auto">
+              {{ session.notes }}
+            </v-card-subtitle>
             <v-container>
               <v-row> <v-col>helooo</v-col> </v-row>
             </v-container>
             <v-divider></v-divider>
             <v-chip
-              v-for="item in sesion.bgInfo.bgCategories"
+              v-for="item in session.bgInfo.bgCategories"
               :key="item"
               class="ma-1"
             >
@@ -210,21 +231,23 @@
 
             <v-divider></v-divider>
             <v-spacer></v-spacer>
-            <v-card-actions>
+            <v-card-actions class="justify-end">
+              <v-card-subtitle
+                >created by: {{ session.createdBy }} at
+                {{ session.timeStamp }}</v-card-subtitle
+              >
+              <v-spacer></v-spacer>
               <v-btn
                 @click="
                   joinSession(
-                    sesion.seshId,
+                    session.seshId,
                     store.storeData.userInfo.userId,
-                    sesion.createdByID,
-                    sesion.wantedPlayers,
-                    sesion.joinedPlayers
+                    session.createdByID,
+                    session.wantedPlayers,
+                    session.joinedPlayers
                   )
                 "
                 >Join</v-btn
-              >
-              <v-card-subtitle
-                >{{ sesion.createdBy }}-{{ sesion.timeStamp }}</v-card-subtitle
               >
             </v-card-actions>
             <!--
@@ -259,7 +282,7 @@
         </v-col>
 
         <v-col cols="3" align="center" justify="center">
-          <!--ELEM Filter card za sesions-->
+          <!--ELEM Filter card za sessions-->
           <v-card dark height="auto" width="250" class="pa-3">
             <!--korak jedan primitivni interface za filtere-->
             <v-card-title>Filers</v-card-title>
@@ -310,11 +333,24 @@
             <v-select
               v-model="filterCategories"
               :items="[
-                'area control',
+                'co-op',
+                'team vs team',
+                'party',
+                'eurogame',
                 'wargame',
-                'asimetric strategy',
+                'abstract',
+                'deduction',
+                'campaign',
+                'deck builder',
+                'engine builder',
+                'dice rolling',
+                'card draft',
                 'worker placment',
-                'co-op game',
+                'dexterity',
+                'resource management',
+                'dungeon crawler',
+                'area control',
+                'hidden role',
               ]"
               chips
               label="Select categories"
@@ -334,7 +370,7 @@
 </template>
 
 <script>
-// !!! popraviti svugdje di piše sesion u session
+// !!! popraviti svugdje di piše session u session promjeniti form za add  drugi put ne radi
 import store from "@/store";
 import {
   collection,
@@ -407,6 +443,11 @@ export default {
       sessionsFilterd: [],
       dialogBgOptions: [],
       //form
+      formValid: true,
+      isFormButtonDisabled: true,
+      rules: {
+        required: (value) => !!value || "Required.",
+      },
       //nead to actualy make it a form and have validation
       menu1: false,
       menu2: false,
@@ -440,6 +481,9 @@ export default {
 
       //pozvati filter
       //this.filterBoardGames();
+    },
+    formValid: function (isValid) {
+      this.isFormButtonDisabled = !isValid;
     },
     picker: function () {
       console.log(typeof this.picker);
@@ -546,6 +590,7 @@ export default {
       });
     },
     async addNewSession() {
+      const userRef = doc(db, "users", store.storeData.userInfo.userId);
       // Add a new document with a generated id.
       const docRef = await addDoc(collection(db, "sessions"), {
         createdBy: store.storeData.userInfo.userName,
@@ -564,6 +609,10 @@ export default {
         wantedPlayers: this.numOfPlayersForm,
         ComunicationLink: this.ComunicationLinkForm,
         players: [],
+      });
+
+      await updateDoc(userRef, {
+        createdSessions: arrayUnion(docRef.id),
       });
 
       console.log("Document written with ID: ", docRef.id);
@@ -587,6 +636,8 @@ export default {
       this.numOfPlayersForm = null;
       this.ComunicationLinkForm = null;
       this.locationForm = null;
+      this.formValid = true;
+      this.isFormButtonDisabled = true;
     },
     //dodavanjje igraća u sesiju
     async joinSession(sessionId, userID, createdBy, maxPlay, joined) {

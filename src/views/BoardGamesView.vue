@@ -219,11 +219,24 @@
             <v-select
               v-model="filterCategories"
               :items="[
-                'area control',
+                'co-op',
+                'team vs team',
+                'party',
+                'eurogame',
                 'wargame',
-                'asimetric strategy',
+                'abstract',
+                'deduction',
+                'campaign',
+                'deck builder',
+                'engine builder',
+                'dice rolling',
+                'card draft',
                 'worker placment',
-                'co-op game',
+                'dexterity',
+                'resource management',
+                'dungeon crawler',
+                'area control',
+                'hidden role',
               ]"
               chips
               label="Select categories"

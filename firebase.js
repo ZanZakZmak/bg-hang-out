@@ -13,6 +13,7 @@ import {
   onSnapshot,
   setDoc,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   getAuth,
@@ -59,6 +60,7 @@ export {
   updateDoc,
   arrayUnion,
   arrayRemove,
+  deleteDoc,
   onSnapshot,
   createUserWithEmailAndPassword,
   onAuthStateChanged,

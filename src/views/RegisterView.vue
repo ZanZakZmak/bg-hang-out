@@ -17,9 +17,12 @@
                 clearble
                 type="text"
                 outlined
+                :rules="[rules.required]"
               ></v-text-field>
               <!--:rules="[rules.required, rules.email]"-->
+
               <v-text-field
+                required
                 v-model="email"
                 dense
                 label="email"

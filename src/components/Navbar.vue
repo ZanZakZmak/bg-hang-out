@@ -24,7 +24,8 @@
         <!--avatar and text-->
         <v-list-item to="/edit-profile">
           <v-list-item-avatar>
-            <v-img src="@/assets/logo.png"></v-img>
+            <!--<v-img src="@/assets/logo.png"></v-img>-->
+            <v-icon>mdi mdi-account-outline</v-icon>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -69,23 +70,32 @@ export default {
           icon: "mdi-view-dashboard",
           path: "/sesions",
         },
-        { name: "manage sesion", icon: "mdi-view-dashboard-edit", path: "/" },
+        {
+          name: "manage sesion",
+          icon: "mdi-view-dashboard-edit",
+          path: "/manage-sessions",
+        },
         {
           name: "board games",
-          icon: "mdi-view-dashboard-edit",
+          icon: "mdi mdi-dice-5-outline",
           path: "/board-games",
         },
         {
           name: "board game lists",
-          icon: "mdi-view-dashboard-edit",
-          path: "/board-game-list",
+          icon: "mdi mdi-view-list",
+          path: "/board-game-lists",
         },
         {
           name: "edit profile",
-          icon: "mdi-view-dashboard-edit",
+          icon: "mdi mdi-account-cog",
           path: "/edit-profile",
         },
         //temporary
+        {
+          name: "landing",
+          icon: "mdi mdi-home-circle-outline",
+          path: "/",
+        },
         {
           name: "register",
           icon: "mdi-view-dashboard-edit",
