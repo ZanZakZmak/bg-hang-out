@@ -1,8 +1,116 @@
 <template>
   <div>
-    <!--napraviti template kako treba info i onda probat cards novi samo sa slikom i imenom i button za delete -->
-    <div>jedna lista {{ RouteID }}</div>
-    <div>info {{ listInfo }}</div>
+    <v-container fill-height fluid class="align-start">
+      <v-col cols="12">
+        <h1>
+          <v-icon color="black" large>mdi mdi-playlist-edit</v-icon
+          >{{ listInfo.name }}
+        </h1>
+        <v-divider class="mb-2"></v-divider>
+        <h2>Descrition:</h2>
+        <v-card color="teal">
+          <h3 style="max-height: 150px; overflow-y: auto">
+            {{ listInfo.description }}
+          </h3>
+        </v-card>
+        <v-divider class="mb-7"></v-divider>
+        <v-row>
+          <!--cange to bgLists and bgListId-->
+          <v-card
+            class="mx-auto mb-4"
+            width="300"
+            height="300"
+            dark
+            v-for="boardgame in listInfo.bgList"
+            :key="boardgame.bgId"
+          >
+            <v-card-title align="center" justify="center">
+              <v-spacer></v-spacer>
+              <v-btn
+                fab
+                x-small
+                color="red"
+                @click="removeBoardGame(boardgame.bgId, RouteID)"
+              >
+                <v-icon>mdi mdi-close-thick</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-img :src="boardgame.bgImage" height="180px"></v-img>
+            <v-card-subtitle align="center" justify="center">
+              <h2>{{ boardgame.bgName }}</h2>
+            </v-card-subtitle>
+
+            <v-divider></v-divider>
+          </v-card>
+        </v-row>
+      </v-col>
+
+      <!--ELEM dialog start-->
+      <template>
+        <v-row justify="center" class="my-2">
+          <v-dialog v-model="dialog" persistent max-width="600px">
+            <!--toglle button-->
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                color="teal darken-3"
+                dark
+                v-bind="attrs"
+                v-on="on"
+                elevation="2"
+                fab
+                fixed
+                bottom
+                right
+              >
+                <v-icon x-large>mdi mdi-playlist-plus</v-icon>
+              </v-btn>
+            </template>
+            <!---->
+            <v-card dark>
+              <v-card-title>
+                <span class="text-h5">Add Board Game</span>
+              </v-card-title>
+              <v-card-text>
+                <v-form v-model="formValid">
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="bgIdForm"
+                          :items="dialogBgOptions"
+                          label="Board game"
+                          :rules="[rules.required]"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-form>
+                <small>izaberite Board Game koji želite dodati</small>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="closeDialogSingleList"
+                >
+                  Close
+                </v-btn>
+                <v-btn
+                  :disabled="!formValid"
+                  color="blue darken-1"
+                  text
+                  @click="addBoardGame(bgIdForm, RouteID)"
+                >
+                  Add
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-row>
+      </template>
+      <!--end-->
+    </v-container>
   </div>
 </template>
 
@@ -20,6 +128,7 @@ import {
   arrayRemove,
   onSnapshot,
 } from "../../firebase.js";
+//!!! ako budem raddio bg single vue onda ruter funkciju ovdje
 //napravit listu moze se pokušat rješit problem od refresha kao i prije (nema vremena za alternativu)
 //liste to --> listu terba napravit da se prosljedi id i tako loada nova stranica ruter pharams?? možda
 
@@ -32,13 +141,21 @@ import {
 //no params two lists are displayed on page #remove bg from list
 export default {
   name: "BoardGameSingleList",
-
   components: {},
   data() {
     return {
       store,
       RouteID: this.$route.params.id,
-      listInfo: null,
+      listInfo: {},
+      //dialog
+      dialog: false,
+      dialogBgOptions: [],
+      formValid: true,
+      rules: {
+        required: (value) => !!value || "Required.",
+      },
+
+      bgIdForm: null,
     };
   },
   methods: {
@@ -86,18 +203,66 @@ export default {
       return arrBg;
     },
     //!!!# add board game
-    //op1?- ovdje otvori se drugi pop up koji ima sve bg poput onih u autocmlete ele iz sessions
-    //op2?-isti princip samo naopako na bg vueu
-    addBoardGame(BgId, listId) {},
-    //!!!# remove bg update array (add bg to list here or in board games )
-    removeBoardGame(BgId, listId) {},
+
+    async addBoardGame(BgId, listId) {
+      try {
+        const userRef = doc(db, "bgLists", listId);
+        await updateDoc(userRef, {
+          arrBoardGames: arrayUnion(BgId),
+        });
+      } catch (error) {
+        console.log("addBoardGame error-> ", error);
+      }
+      this.closeDialogSingleList();
+    },
+    //!!!# remove bg update
+    async removeBoardGame(BgId, listId) {
+      try {
+        const userRef = doc(db, "bgLists", listId);
+        await updateDoc(userRef, {
+          arrBoardGames: arrayRemove(BgId),
+        });
+      } catch (error) {
+        console.log("removeBoardGame error-> ", error);
+      }
+    },
+    async getAllBoardGames() {
+      //this.boardGames = [...store.storeData.boardgames];
+      //use map to order data
+      const querySnapshot = await getDocs(collection(db, "boardGames"));
+      querySnapshot.forEach((doc) => {
+        this.dialogBgOptions.push({
+          text: doc.data().bgName,
+          value: doc.id,
+        });
+      });
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+    },
+    closeDialogSingleList() {
+      this.dialog = false;
+      this.bgIdForm = null;
+    },
   },
   created() {
-    //!!!dodati snap shot za aktualni upedate
+    onSnapshot(collection(db, "bgLists"), async (collection) => {
+      /*
+      collection.forEach((snap) => {
+        console.log("Current data: ", snap.data());
+      }); 
+      console.log("Current data testiranje ");
+      //this.sessionsFilterd = this.sessions;
+      */
+      console.log("ja snepshotam");
+      this.listInfo = await this.getList();
+    });
   },
   async mounted() {
     console.log(this.RouteID);
-    this.listInfo = await this.getList();
+    //this.listInfo = await this.getList();
+    await this.getAllBoardGames();
   },
 };
 </script>

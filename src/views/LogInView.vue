@@ -133,7 +133,7 @@ export default {
           // Signed in
           const user = userCredential.user;
           // ...
-          this.$router.push({ path: "/" });
+          //this.$router.push({ path: "/" });
         })
         .catch((error) => {
           const errorCode = error.code;

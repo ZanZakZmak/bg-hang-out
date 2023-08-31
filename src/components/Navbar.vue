@@ -112,7 +112,7 @@ export default {
       signOut(auth)
         .then(() => {
           console.log("signed out");
-          this.$router.push({ path: "/" });
+          //this.$router.push({ path: "/" });
         })
         .catch((error) => {
           console.log("desio se error", error.code);

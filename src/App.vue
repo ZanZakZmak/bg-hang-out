@@ -20,6 +20,7 @@ import {
 
 import store from "@/store.js";
 import Navbar from "@/components/Navbar.vue";
+import router from "./router/index.js";
 export default {
   name: "App",
   components: { Navbar },
@@ -57,17 +58,25 @@ export default {
     },
   },
   beforeCreate() {
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
+      const currentRoute = router.currentRoute;
       if (user) {
         console.log("Authenticated");
         store.isAuthenticated = true;
         //add to store fec from firebase
-        this.setStoreUserInfo(user.uid);
+        await this.setStoreUserInfo(user.uid);
+        if (!currentRoute.meta.needsUser) {
+          router.push({ name: "landingpage-view" });
+        }
       } else {
         console.log("Not Authenticated");
         store.isAuthenticated = false;
         //remove from store
         store.storeData.userInfo.userName = "";
+        store.storeData.userInfo.userId = "";
+        if (currentRoute.meta.needsUser) {
+          router.push({ name: "landingpage-view" });
+        }
       }
     });
   },

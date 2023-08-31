@@ -7,7 +7,7 @@
           <!--toglle button-->
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="teal darken-3" dark v-bind="attrs" v-on="on">
-              Add Session
+              Add New List
             </v-btn>
           </template>
           <!---->
@@ -95,10 +95,10 @@
 
             <v-divider></v-divider>
 
-            <v-divider></v-divider>
+            <!--<v-divider></v-divider>
             <v-card-subtitle>Curently joined </v-card-subtitle>
             <v-card-subtitle class="pa-0 ma-1">
-              <!--<v-chip
+              <v-chip
               class="ma-2"
               color="teal darken-4"
               v-for="person in list.joinedPlayers"
@@ -108,9 +108,9 @@
                 <v-icon>mdi-account-circle</v-icon>
               </v-avatar>
               {{ person.userName }}
-            </v-chip>-->
+            </v-chip>
             </v-card-subtitle>
-            <v-divider></v-divider>
+            <v-divider></v-divider>-->
             <v-card-subtitle align="center" justify="center"
               >Description</v-card-subtitle
             >
@@ -124,7 +124,7 @@
             <v-spacer></v-spacer>
             <v-card-actions class="justify-end">
               <v-spacer></v-spacer>
-              <v-btn> Delete </v-btn>
+
               <v-btn fab color="teal" large @click="goToList(list.bgListId)">
                 <v-icon large> mdi mdi-playlist-edit </v-icon>
               </v-btn>
@@ -258,7 +258,7 @@ export default {
       this.dialog = false;
       this.nameForm = null;
       this.descriptionForm = null;
-      this.formValid = true;
+      //this.formValid = true;
     },
   },
 

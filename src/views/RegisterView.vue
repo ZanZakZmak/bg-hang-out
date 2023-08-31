@@ -117,7 +117,7 @@ export default {
           console.log("uspjesno autentificiran ", user.uid);
           // add user info to colection make the id
           this.saveUserInfoToDatabase(user.uid);
-          this.$router.push({ path: "/" });
+          //this.$router.push({ path: "/" });
         })
         .catch((error) => {
           const errorCode = error.code;

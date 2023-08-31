@@ -622,7 +622,7 @@ export default {
       this.dialog = false;
       this.clearSessionForm();
     },
-    //čišćenje forme jednostavno stavljanje vrijednosti na null
+    //čišćenje forme jednostavno stavljanje vrijednosti na null promjeniti za dialog formu is buton maknut i stavit samo na isform
     clearSessionForm() {
       this.titleForm = null;
       this.dateForm = new Date(

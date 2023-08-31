@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import store from "@/store.js";
 
 Vue.use(VueRouter);
 
@@ -27,80 +28,89 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/RegisterView.vue"),
+    meta: {
+      noUser: true,
+    },
   },
   {
     path: "/login",
     name: "login-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LogInView.vue"),
+    meta: {
+      noUser: true,
+    },
   },
   {
     path: "/sesions",
     name: "sesions-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/SesionsView.vue"),
+
+    meta: {
+      needsUser: true,
+    },
   },
   {
     path: "/manage-sessions",
     name: "manage-sessions-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/ManageSessionsView.vue"),
+    meta: {
+      needsUser: true,
+    },
   },
   {
     path: "/",
     name: "landingpage-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LandingPageView.vue"),
   },
   {
     path: "/board-games",
     name: "board-games-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/BoardGamesView.vue"),
+    meta: {
+      needsUser: true,
+    },
   },
   {
     path: "/board-game-lists",
     name: "board-game-lists-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/BoardGameListsView.vue"),
+    meta: {
+      needsUser: true,
+    },
   },
   {
     path: "/board-game-lists/:id",
     name: "board-game-single-list-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(
         /* webpackChunkName: "about" */ "../views/BoardGameSingleListView.vue"
       ),
+    meta: {
+      needsUser: true,
+    },
   },
   {
     path: "/edit-profile",
     name: "edit-profile-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/EditProfileView.vue"),
+    meta: {
+      needsUser: true,
+    },
   },
 ];
 
@@ -108,6 +118,17 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isUserNotAuthenticated = !store.isAuthenticated;
+  if (isUserNotAuthenticated && to.meta.needsUser) {
+    next("/");
+  } else if (!isUserNotAuthenticated && to.meta.noUser) {
+    next("/");
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -99,7 +99,7 @@ export default {
           });
         }
       } else {
-        conslole.log("sacekaj store se nije refa");
+        console.log("sacekaj store se nije refa");
       }
     },
     async getSession(seshId) {
