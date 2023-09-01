@@ -9,7 +9,12 @@
           src="https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/newscms/2020_25/3390425/board-games-kr-2x1-tease-200616.jpg"
         ></v-img
       ></v-col>
-      <v-col v-show="!isAuthenticated" align="center" justify="center" cols="4">
+      <v-col
+        v-show="!store.isAuthenticated"
+        align="center"
+        justify="center"
+        cols="4"
+      >
         <v-card class="blue-grey darken-3">
           <v-card-title>Prijavite se </v-card-title>
           <v-card-text>Pridružite se i vi te zaigrajte igre </v-card-text>
@@ -30,17 +35,23 @@
 </template>
 
 <script>
+import store from "@/store";
 import { auth, onAuthStateChanged } from "../../firebase.js";
+
 export default {
   name: "LandingPage",
 
   components: {},
   data() {
-    return { isAuthenticated: false };
+    return {
+      store,
+
+      //isAuthenticated: false,
+    };
   },
   beforeCreate() {
     // unesecary remove later
-    onAuthStateChanged(auth, (user) => {
+    /*onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Authenticated");
         this.isAuthenticated = true;
@@ -48,7 +59,7 @@ export default {
         console.log("Not Authenticated");
         this.isAuthenticated = false;
       }
-    });
+    });*/
   },
 };
 </script>

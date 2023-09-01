@@ -5,6 +5,8 @@ import {
   getFirestore,
   collection,
   getDocs,
+  query,
+  orderBy,
   addDoc,
   doc,
   updateDoc,
@@ -21,7 +23,10 @@ import {
   onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword,
+  updateEmail,
+  updatePassword,
 } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,14 +50,19 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
 const db = getFirestore(app);
+// Initialize Cloud Storage and get a reference to the service
+const storage = getStorage(app);
 
 export {
   app,
   auth,
   db,
+  storage,
   collection,
   getDocs,
   getDoc,
+  query,
+  orderBy,
   getAuth,
   doc,
   setDoc,
@@ -66,4 +76,6 @@ export {
   onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword,
+  updateEmail,
+  updatePassword,
 };

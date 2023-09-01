@@ -1,12 +1,18 @@
 <template>
-  <v-container fill-height fluid>
+  <div>
     <!--ELEM dialog start-->
     <template>
       <v-row justify="center" class="my-2">
         <v-dialog v-model="dialog" persistent max-width="600px">
           <!--toglle button-->
           <template v-slot:activator="{ on, attrs }">
-            <v-btn color="teal darken-3" dark v-bind="attrs" v-on="on">
+            <v-btn
+              class="my-4"
+              color="teal darken-3"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
               Add Session
             </v-btn>
           </template>
@@ -161,6 +167,7 @@
       </v-row>
     </template>
     <!--end-->
+    <v-divider class="my-2"></v-divider>
 
     <!--content start-->
     <v-container fill-height fluid>
@@ -168,89 +175,94 @@
         <v-col cols="9">
           <!--width="auto" full width za uredit kartice na kraju-->
           <!--ELEM session card-->
-          <v-card
-            class="mx-auto mb-4"
-            max-width="400"
-            dark
-            v-for="session in sessionsFilterd"
-            :key="session.seshId"
-            v-show="session.show"
-          >
-            <v-img :src="session.bgInfo.bgImage" height="150px"></v-img>
-
-            <v-card-title> {{ session.title }} </v-card-title>
-
-            <v-card-subtitle align="center" justify="center">
-              Board Game {{ session.bgInfo.bgName }}
-            </v-card-subtitle>
-            <v-divider></v-divider>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title>Date: {{ session.date }}</v-list-item-title>
-                <v-list-item-title>Time: {{ session.time }}</v-list-item-title>
-                <v-list-item-title
-                  >Location: {{ session.location }}</v-list-item-title
-                >
-                <v-divider inset></v-divider>
-                <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-
-            <v-card-subtitle>Curently joined </v-card-subtitle>
-            <v-card-subtitle class="pa-0 ma-1">
-              <v-chip
-                class="ma-2"
-                color="teal darken-4"
-                v-for="person in session.joinedPlayers"
-                :key="person.guestId"
-              >
-                <v-avatar left>
-                  <v-icon>mdi-account-circle</v-icon>
-                </v-avatar>
-                {{ person.userName }}
-              </v-chip>
-            </v-card-subtitle>
-            <v-divider></v-divider>
-            <v-card-subtitle>Aditional notes</v-card-subtitle>
-
-            <v-card-subtitle style="max-height: 100px; overflow-y: auto">
-              {{ session.notes }}
-            </v-card-subtitle>
-            <v-container>
-              <v-row> <v-col>helooo</v-col> </v-row>
-            </v-container>
-            <v-divider></v-divider>
-            <v-chip
-              v-for="item in session.bgInfo.bgCategories"
-              :key="item"
-              class="ma-1"
+          <v-row>
+            <v-card
+              class="mx-auto mb-4"
+              max-width="400"
+              dark
+              v-for="session in sessionsFilterd"
+              :key="session.seshId"
+              v-show="session.show"
             >
-              {{ item }}
-            </v-chip>
+              <v-img :src="session.bgInfo.bgImage" height="150px"></v-img>
 
-            <v-divider></v-divider>
-            <v-spacer></v-spacer>
-            <v-card-actions class="justify-end">
-              <v-card-subtitle
-                >created by: {{ session.createdBy }} at
-                {{ session.timeStamp }}</v-card-subtitle
+              <v-card-title> {{ session.title }} </v-card-title>
+
+              <v-card-subtitle align="center" justify="center">
+                Board Game {{ session.bgInfo.bgName }}
+              </v-card-subtitle>
+              <v-divider></v-divider>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title
+                    >Date: {{ session.date }}</v-list-item-title
+                  >
+                  <v-list-item-title
+                    >Time: {{ session.time }}</v-list-item-title
+                  >
+                  <v-list-item-title
+                    >Location: {{ session.location }}</v-list-item-title
+                  >
+                  <v-divider inset></v-divider>
+                  <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+
+              <v-card-subtitle>Curently joined </v-card-subtitle>
+              <v-card-subtitle class="pa-0 ma-1">
+                <v-chip
+                  class="ma-2"
+                  color="teal darken-4"
+                  v-for="person in session.joinedPlayers"
+                  :key="person.guestId"
+                >
+                  <v-avatar left>
+                    <v-icon>mdi-account-circle</v-icon>
+                  </v-avatar>
+                  {{ person.userName }}
+                </v-chip>
+              </v-card-subtitle>
+              <v-divider></v-divider>
+              <v-card-subtitle>Aditional notes</v-card-subtitle>
+
+              <v-card-subtitle style="max-height: 100px; overflow-y: auto">
+                {{ session.notes }}
+              </v-card-subtitle>
+              <v-container>
+                <v-row> <v-col>helooo</v-col> </v-row>
+              </v-container>
+              <v-divider></v-divider>
+              <v-chip
+                v-for="item in session.bgInfo.bgCategories"
+                :key="item"
+                class="ma-1"
               >
+                {{ item }}
+              </v-chip>
+
+              <v-divider></v-divider>
               <v-spacer></v-spacer>
-              <v-btn
-                @click="
-                  joinSession(
-                    session.seshId,
-                    store.storeData.userInfo.userId,
-                    session.createdByID,
-                    session.wantedPlayers,
-                    session.joinedPlayers
-                  )
-                "
-                >Join</v-btn
-              >
-            </v-card-actions>
-            <!--
+              <v-card-actions class="justify-end">
+                <v-card-subtitle
+                  >created by: {{ session.createdBy }} at
+                  {{ session.timeStamp }}</v-card-subtitle
+                >
+                <v-spacer></v-spacer>
+                <v-btn
+                  @click="
+                    joinSession(
+                      session.seshId,
+                      store.storeData.userInfo.userId,
+                      session.createdByID,
+                      session.wantedPlayers,
+                      session.joinedPlayers
+                    )
+                  "
+                  >Join</v-btn
+                >
+              </v-card-actions>
+              <!--
               <v-card-actions>
                 <v-btn color="orange lighten-2" text> Explore </v-btn>
 
@@ -278,7 +290,8 @@
                 </div>
               </v-expand-transition>
               -->
-          </v-card>
+            </v-card>
+          </v-row>
         </v-col>
 
         <v-col cols="3" align="center" justify="center">
@@ -366,7 +379,7 @@
       </v-row>
     </v-container>
     <!--end-->
-  </v-container>
+  </div>
 </template>
 
 <script>
@@ -383,6 +396,8 @@ import {
   arrayUnion,
   arrayRemove,
   onSnapshot,
+  query,
+  orderBy,
 } from "../../firebase.js";
 
 export default {
@@ -490,9 +505,11 @@ export default {
     },
   },
   methods: {
-    //dohvat sesija sa baze
+    //dohvat sesija sa baze 1693606186430
     async getSessions() {
-      const querySnapshot = await getDocs(collection(db, "sessions"));
+      const q = query(collection(db, "sessions"), orderBy("timeStamp"));
+
+      const querySnapshot = await getDocs(q);
       this.sessions = [];
       querySnapshot.forEach(async (doc) => {
         this.sessions.push({
@@ -603,7 +620,7 @@ export default {
         title: this.titleForm,
         Date: this.dateForm,
         Time: this.timeForm,
-        timeStamp: this.timeForm,
+        timeStamp: Date.now(),
         notes: this.notesform,
         bgID: this.bgIdForm,
         wantedPlayers: this.numOfPlayersForm,

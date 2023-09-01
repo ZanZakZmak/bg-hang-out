@@ -2,13 +2,13 @@
   <v-container fill-height fluid class="background">
     <v-row align="center" justify="center">
       <v-col align="center" justify="center" cols="12">
-        <v-card class="card-border" width="600px" outlined>
+        <v-card class="card-border" width="600px" outlined dark>
           <v-card-title align="left">REGISTER</v-card-title>
           <v-card-subtitle align="left">
             Register to enjoy the app
           </v-card-subtitle>
           <v-card-text>
-            <!--v-model="valid"-->
+            <!--v-model="valid" cleareble krivo upisan-->
             <v-form v-model="valid">
               <v-text-field
                 v-model="userName"
@@ -53,22 +53,18 @@
               CLEAR
             </v-btn>
             <!--:disabled="isButtonDisabled"-->
-            <v-btn
-              :disabled="isButtonDisabled"
-              outlined
-              @click="registerAddUser"
-            >
+            <v-btn :disabled="!valid" outlined @click="registerAddUser">
               OK
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-btn @click="saveUserInfoToDatabase('345')"></v-btn>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import store from "@/store.js";
 import {
   auth,
   createUserWithEmailAndPassword,
@@ -82,6 +78,7 @@ export default {
   components: {},
   data() {
     return {
+      store,
       isButtonDisabled: true,
       valid: true,
       email: null,
@@ -130,7 +127,7 @@ export default {
     async saveUserInfoToDatabase(idUser) {
       await setDoc(doc(db, "users", idUser), {
         email: this.email,
-        password: this.password,
+        //password: this.password,
         userName: this.userName,
         bgLists: [],
         createdSessions: [],

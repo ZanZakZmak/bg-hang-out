@@ -1,4 +1,5 @@
 let storeData = {
+  //test: "nevidim",
   userInfo: { userName: "", userId: "" },
   boardgames: [
     {
@@ -27,6 +28,6 @@ let storeData = {
 };
 export default {
   searchTerm: "",
-  isAuthenticated: false,
+  isAuthenticated: null,
   storeData,
 };

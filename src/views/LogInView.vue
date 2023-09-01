@@ -2,7 +2,7 @@
   <v-container fill-height fluid class="background">
     <v-row align="center" justify="center">
       <v-col align="center" justify="center" cols="12">
-        <v-card class="card-border" width="600px" outlined>
+        <v-card class="card-border" width="600px" outlined dark>
           <v-card-title align="left">LOGIN</v-card-title>
           <v-card-subtitle align="left"> Deer user, plz login </v-card-subtitle>
           <v-card-text class="card-text-border">

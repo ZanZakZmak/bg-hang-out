@@ -65,7 +65,10 @@ export default {
         store.isAuthenticated = true;
         //add to store fec from firebase
         await this.setStoreUserInfo(user.uid);
-        if (!currentRoute.meta.needsUser) {
+        if (
+          !currentRoute.meta.needsUser &&
+          currentRoute.name != "landingpage-view"
+        ) {
           router.push({ name: "landingpage-view" });
         }
       } else {
@@ -74,7 +77,10 @@ export default {
         //remove from store
         store.storeData.userInfo.userName = "";
         store.storeData.userInfo.userId = "";
-        if (currentRoute.meta.needsUser) {
+        if (
+          currentRoute.meta.needsUser &&
+          currentRoute.name != "landingpage-view"
+        ) {
           router.push({ name: "landingpage-view" });
         }
       }

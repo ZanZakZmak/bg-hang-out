@@ -69,6 +69,10 @@ const routes = [
 
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/LandingPageView.vue"),
+    meta: {
+      needsUser: false,
+      noUser: false,
+    },
   },
   {
     path: "/board-games",
@@ -119,12 +123,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-
+// jos zajebava na landingu ali ostalo radi
 router.beforeEach((to, from, next) => {
-  const isUserNotAuthenticated = !store.isAuthenticated;
-  if (isUserNotAuthenticated && to.meta.needsUser) {
+  const isUserAuthenticated = store.isAuthenticated;
+  if (isUserAuthenticated == false && to.meta.needsUser) {
+    console.log("nije ulogiran test ", store.storeData.test);
     next("/");
-  } else if (!isUserNotAuthenticated && to.meta.noUser) {
+  } else if (isUserAuthenticated == true && to.meta.noUser) {
+    console.log("ulogiran je");
     next("/");
   } else {
     next();
