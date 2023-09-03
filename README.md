@@ -1,7 +1,9 @@
 # BG_HangOut
 
 Web aplikacija za povezivanje ljubitelja stolnih igara, kako bi pronašli igraće za igranje.<br>
-funkcijonalnost ocjenjivanja drugih korisnika, te liste za prikaz dostupih igara.
+funkcijonalnost izrade termina za igranje društvenih igara i prikljućivanje u već postojeće termine, upravljanje terminima (delete,laeve).<br>
+još par funkcionalnosti su mogućnos pretrage i filtriranja nad podatcima, kreiranje listi za prikaz dostupih igara,<br>
+također se mogu dodavati nove Društvene igre sa slikama u bazu i edit profila.<br>
 
 ## Autori i zaduženja
 
@@ -9,7 +11,9 @@ funkcijonalnost ocjenjivanja drugih korisnika, te liste za prikaz dostupih igara
 
 ## Javni link na aplikaciju
 
-Web: [Prototip javni link](https://www.figma.com/proto/lZDcbWTy9phAmHzZxfXixL/BGHangOut?node-id=2-2&scaling=min-zoom&page-id=0%3A1)
+Prototip: [Prototip javni link](https://www.figma.com/proto/lZDcbWTy9phAmHzZxfXixL/BGHangOut?node-id=2-2&scaling=min-zoom&page-id=0%3A1)<br>
+Web : [Hostana aplikacija javni link](https://bg-hang-cwmqg9vxo-zanzakzmak.vercel.app/)<br>
+
 
 ## Organizacija
 
