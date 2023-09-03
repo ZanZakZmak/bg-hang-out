@@ -5,16 +5,29 @@
     <v-card-title> {{ session.title }} </v-card-title>
 
     <v-card-subtitle align="center" justify="center">
-      {{ session.bgInfo.bgName }}
+      <v-chip>
+        {{ session.bgInfo.bgName }}
+      </v-chip>
+      <v-btn
+        color="teal lighten-3"
+        icon
+        @click="goToBoardGame(session.bgInfo.bgId)"
+      >
+        <v-icon>mdi mdi-open-in-new</v-icon>
+      </v-btn>
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-list-item>
       <v-list-item-content>
-        <v-list-item-title>Date: {{ session.date }}</v-list-item-title>
-        <v-list-item-title>Time: {{ session.time }}</v-list-item-title>
-        <v-list-item-title>Location: {{ session.location }}</v-list-item-title>
-        <v-divider inset></v-divider>
-        <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
+        <v-list-item-title>
+          Date: <v-chip>{{ session.date }}</v-chip>
+        </v-list-item-title>
+        <v-list-item-title>
+          Time: <v-chip> {{ session.time }} </v-chip></v-list-item-title
+        >
+        <v-list-item-title>
+          Location: <v-chip> {{ session.location }} </v-chip>
+        </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
@@ -34,37 +47,29 @@
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-subtitle>Aditional notes</v-card-subtitle>
+    <v-card color="grey darken-3" class="ma-2">
+      <v-card-subtitle style="max-height: 100px; overflow-y: auto">
+        {{ session.notes }}
+      </v-card-subtitle>
+    </v-card>
 
-    <v-card-subtitle style="max-height: 100px; overflow-y: auto">
-      {{ session.notes }}
-    </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-subtitle>
       Comunication link :
       <v-chip color="teal"> {{ session.comunicationLink }} </v-chip>
     </v-card-subtitle>
 
-    <v-container>
-      <v-row> <v-col>helooo</v-col> </v-row>
-    </v-container>
     <v-divider></v-divider>
-    <!--<v-chip
-              v-for="item in session.bgInfo.bgCategories"
-              :key="item"
-              class="ma-1"
-            >
-              {{ item }}
-            </v-chip>-->
 
     <v-divider></v-divider>
     <v-spacer></v-spacer>
     <v-card-actions class="justify-end">
       <v-card-subtitle
-        >created by: {{ session.createdBy }} at
-        {{ session.timeStamp }}</v-card-subtitle
+        >By: {{ session.createdBy }} at {{ session.timeStamp }}</v-card-subtitle
       >
       <v-spacer></v-spacer>
       <v-btn
+        color="teal darken-1"
         v-show="type == 'created'"
         @click="
           deleteSession(
@@ -100,51 +105,58 @@ import {
 export default {
   name: "ManageSessionsCard",
   props: ["session", "type"],
-  //created #end-session (kreator,igraći,title,date & time,bg-ime-slika-link?,location,contact-link,aditional-notes)
-  //joined #leave (kreator,igraći,title,date & time,bg-ime-slika-link?,location,contact-link,aditional-notes, broj igraća željeni)
 
   data() {
-    console.log("heloo u konzlu aaaaa :");
     return {
       store,
     };
   },
   methods: {
-    //click Delete session (maknuti id sessije sa creator liste, maknuti id seessije sa svih korisnika koji su prikljućeni u sessiju)
     async deleteSession(seshId, arrParticipants, userId) {
-      const userRef = doc(db, "users", userId);
-      await deleteDoc(doc(db, "sessions", seshId));
-      //remove all joined participants
-      //for loop sa arrow fun koja ide kroz listu i upedata usere joined sesh
-      await arrParticipants.forEach(async (value) => {
-        const participantRef = doc(db, "users", value.guestId);
-        await updateDoc(participantRef, {
-          joinedSessions: arrayRemove(seshId),
+      try {
+        const userRef = doc(db, "users", userId);
+        await deleteDoc(doc(db, "sessions", seshId));
+        //remove all joined participants
+
+        await arrParticipants.forEach(async (value) => {
+          const participantRef = doc(db, "users", value.guestId);
+          await updateDoc(participantRef, {
+            joinedSessions: arrayRemove(seshId),
+          });
         });
-      });
-      //remove creator
-      //updetamo created u korisniku
 
-      await updateDoc(userRef, {
-        createdSessions: arrayRemove(seshId),
-      });
+        //updetamo created u korisniku
+
+        await updateDoc(userRef, {
+          createdSessions: arrayRemove(seshId),
+        });
+      } catch (error) {
+        console.log("deleteSession eror->", error);
+      }
     },
-    //click Leave session (maknut ga iz liste ukljućenih u sesiju, podesiti value za show, maknut iz njegove liste na users session )
+
     async leaveSession(sessionId, userId) {
-      console.log("tastamo ovu funkciju", sessionId, " and ", userId);
-      const seshRef = doc(db, "sessions", sessionId);
-      const userRef = doc(db, "users", userId);
+      try {
+        const seshRef = doc(db, "sessions", sessionId);
+        const userRef = doc(db, "users", userId);
 
-      //session list,show
-      await updateDoc(seshRef, {
-        players: arrayRemove(userId),
-        showIfNotFull: true,
-      });
+        //session list,show
+        await updateDoc(seshRef, {
+          players: arrayRemove(userId),
+          showIfNotFull: true,
+        });
 
-      //user
-      await updateDoc(userRef, {
-        joinedSessions: arrayRemove(sessionId),
-      });
+        //user
+        await updateDoc(userRef, {
+          joinedSessions: arrayRemove(sessionId),
+        });
+      } catch (error) {
+        console.log("leaveSession eror->", error);
+      }
+    },
+
+    goToBoardGame(boardGameId) {
+      this.$router.push(`/board-games/${boardGameId}`);
     },
   },
 };

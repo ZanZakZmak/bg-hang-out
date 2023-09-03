@@ -36,12 +36,14 @@
                 dense
                 label="password"
                 clearble
-                :append-icon="showIcon ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
-                :type="showIcon ? 'text' : 'password'"
                 outlined
               ></v-text-field>
             </v-form>
+            <v-card-subtitle
+              >Alredy have an account go to
+              <v-chip @click="goToLogin()" color="blue">log in</v-chip>
+            </v-card-subtitle>
           </v-card-text>
           <v-card-actions class="card-actions">
             <v-btn
@@ -52,12 +54,34 @@
             >
               CLEAR
             </v-btn>
-            <!--:disabled="isButtonDisabled"-->
+
             <v-btn :disabled="!valid" outlined @click="registerAddUser">
               OK
             </v-btn>
           </v-card-actions>
         </v-card>
+        <!--snacbar warning-->
+        <template>
+          <div class="text-center ma-2">
+            <v-snackbar v-model="snackbar" timeout="3000" color="red">
+              {{ text }}
+
+              <template v-slot:action="{ attrs }">
+                <v-btn
+                  color="black"
+                  text
+                  v-bind="attrs"
+                  @click="
+                    snackbar = false;
+                    text = '';
+                  "
+                >
+                  Close
+                </v-btn>
+              </template>
+            </v-snackbar>
+          </div>
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -79,7 +103,7 @@ export default {
   data() {
     return {
       store,
-      isButtonDisabled: true,
+      //form
       valid: true,
       email: null,
       password: null,
@@ -94,12 +118,13 @@ export default {
           /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
           "E-mail must be valid",
       },
-      //user info
+      // snackbar data
+      snackbar: false,
+      text: "",
     };
   },
   methods: {
     clearDataFromRegisterForm() {
-      this.valid = true;
       this.email = null;
       this.password = null;
       this.userName = null;
@@ -120,35 +145,32 @@ export default {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(error, errorCode, errorMessage);
+          this.text = "User alredy exsists";
+          this.snackbar = true;
           // ..
         });
     },
     // dodati user info koji je potreban
     async saveUserInfoToDatabase(idUser) {
-      await setDoc(doc(db, "users", idUser), {
-        email: this.email,
-        //password: this.password,
-        userName: this.userName,
-        bgLists: [],
-        createdSessions: [],
-        joinedSessions: [],
-      });
+      try {
+        await setDoc(doc(db, "users", idUser), {
+          email: this.email,
+          userName: this.userName,
+          bgLists: [],
+          createdSessions: [],
+          joinedSessions: [],
+        });
+      } catch (error) {
+        console.log("saveUserInfoToDatabase eror->", error);
+      }
+    },
+    goToLogin() {
+      this.$router.push(`/login`);
     },
   },
   mounted() {
     console.log("na register sam ");
   },
-  // mora watch jer inaće ne radi poziv kako treba
-  watch: {
-    valid: function (isValid) {
-      this.isButtonDisabled = !isValid;
-    },
-  },
-  /*computed: {
-    setButton: function () {
-      this.isButtonDisabled = !this.valid;
-    },
-  },*/
 };
 </script>
 <style>

@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app dark>
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-    <img width="50" height="50" src="@/assets/logo.png" alt="khmmm" />
+    <img width="50" height="50" src="@/assets/dices.png" alt="khmmm" />
     <v-spacer></v-spacer>
 
     <v-text-field
@@ -9,7 +9,7 @@
       solo
       hide-details
       dense
-      label="ovdje sam"
+      label="Pretraga (ime,lokacija,naziv BG, title)"
       prepend-inner-icon="mdi-magnify"
     ></v-text-field>
 
@@ -90,19 +90,12 @@ export default {
           icon: "mdi mdi-account-cog",
           path: "/edit-profile",
         },
-        //temporary
+
         {
           name: "landing",
           icon: "mdi mdi-home-circle-outline",
           path: "/",
         },
-        {
-          name: "register",
-          icon: "mdi-view-dashboard-edit",
-          path: "/register",
-        },
-        { name: "login", icon: "mdi-view-dashboard-edit", path: "/login" },
-        {},
       ],
     };
   },

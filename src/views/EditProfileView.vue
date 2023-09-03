@@ -5,100 +5,32 @@
     <!--content start-->
     <v-container fill-height fluid>
       <v-row>
-        <v-col cols="3">
+        <v-col cols="12" xs="12" md="3" sm="3">
           <!--width="auto" full width za uredit kartice na kraju-->
           <!--ELEM session card-->
           <v-row>
-            <v-card class="mx-auto mb-4" max-width="400" dark>
-              <v-card-title> fdsdfsdf </v-card-title>
+            <v-card class="mx-auto mb-4" width="250" dark>
+              <v-card-title> User Info </v-card-title>
 
-              <v-card-subtitle align="center" justify="center">
-                Board Game sdfdsfsd
-              </v-card-subtitle>
-              <v-divider></v-divider>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title>Date: sdfdsf</v-list-item-title>
-                  <v-list-item-title>Time:dsfsdfd</v-list-item-title>
-                  <v-list-item-title>Location: sfdsdf</v-list-item-title>
-                  <v-divider inset></v-divider>
-                  <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-divider></v-divider>
-
-              <v-card-subtitle>Curently joined </v-card-subtitle>
-              <v-card-subtitle class="pa-0 ma-1">
-                <v-chip class="ma-2" color="teal darken-4">
-                  <v-avatar left>
-                    <v-icon>mdi-account-circle</v-icon>
-                  </v-avatar>
-                  sdfsdfds
+              <v-card-subtitle align="start" justify="center">
+                Email:
+                <v-chip>
+                  {{ store.storeData.userInfo.userEmail }}
                 </v-chip>
               </v-card-subtitle>
               <v-divider></v-divider>
-              <v-card-subtitle>Aditional notes</v-card-subtitle>
-
-              <v-card-subtitle style="max-height: 100px; overflow-y: auto">
-                sdfdsdfsd
+              <v-card-subtitle align="start" justify="center">
+                Username:
+                <v-chip>
+                  {{ store.storeData.userInfo.userName }}
+                </v-chip>
               </v-card-subtitle>
-              <v-container>
-                <v-row> <v-col>helooo</v-col> </v-row>
-              </v-container>
               <v-divider></v-divider>
-              <v-chip class="ma-1"> sdfsdfsd </v-chip>
-
-              <v-divider></v-divider>
-              <v-spacer></v-spacer>
-              <v-card-actions class="justify-end">
-                <v-card-subtitle>created by: dsfsdf at dsfsdf</v-card-subtitle>
-                <v-spacer></v-spacer>
-                <v-btn
-                  @click="
-                    joinSession(
-                      session.seshId,
-                      store.storeData.userInfo.userId,
-                      session.createdByID,
-                      session.wantedPlayers,
-                      session.joinedPlayers
-                    )
-                  "
-                  >Join</v-btn
-                >
-              </v-card-actions>
-              <!--
-              <v-card-actions>
-                <v-btn color="orange lighten-2" text> Explore </v-btn>
-
-                <v-spacer></v-spacer>
-
-                <v-btn icon @click="Bgame.show = !Bgame.show">
-                  <v-icon>{{
-                    Bgame.show ? "mdi-chevron-up" : "mdi-chevron-down"
-                  }}</v-icon>
-                </v-btn>
-              </v-card-actions>
-                
-              <v-expand-transition>
-                <div v-show="Bgame.show">
-                  <v-divider></v-divider>
-
-                  <v-card-text>
-                    I'm a thing. But, like most politicians, he promised more
-                    than he could deliver. You won't have time for sleeping,
-                    soldier, not with all the bed making you'll be doing. Then
-                    we'll go with that data file! Hey, you add a one and two
-                    zeros to that or we walk! You're going to do his laundry?
-                    I've got to find a way to escape.
-                  </v-card-text>
-                </div>
-              </v-expand-transition>
-              -->
             </v-card>
           </v-row>
         </v-col>
 
-        <v-col cols="7" align="center" justify="center">
+        <v-col cols="12" xs="12" md="9" sm="9" align="center" justify="center">
           <!--ELEM Filter card za sessions-->
           <v-card dark height="auto" min-width="300" class="pa-3">
             <v-card-title>Edit profile</v-card-title>
@@ -124,6 +56,7 @@
               <v-col cols="1">
                 <v-btn
                   class="mx-3"
+                  color="teal lighten-1"
                   @click="changeUsername()"
                   :disabled="!formValidName"
                   >apply</v-btn
@@ -148,6 +81,7 @@
               </v-form>
               <v-btn
                 class="mx-3"
+                color="teal lighten-1"
                 :disabled="!formValidEmail"
                 @click="changeEmail()"
                 >apply</v-btn
@@ -183,6 +117,7 @@
               </v-form>
               <v-btn
                 class="mx-3"
+                color="teal lighten-1"
                 @click="changePassword()"
                 :disabled="!formValidPassword || !isPasswordSame"
                 >apply</v-btn
@@ -221,23 +156,13 @@
 </template>
 
 <script>
-//staviti mogucnost #promjene lozinke pogledat dostupne alate u firebae , # promjena maila , promjena username
 //{? #ocjena #liste prijatelja i zahtjeva, #zasebni search za korisnike #profil za korisnika #dodavanje avatara nece se izraditi}
-//za ostalo probati napraviti blob storage za slike sa vue croppa
-// single bg profile i funkciju koja vodi na njega te dodati u sve
-// pogledati malo funkcionalnosti sa ogranićavanjem duplikati pravila strukturirati malo try catch na backend upitima , izbrisati nepotrebne stvari doraditi vizualno još, urediti podatke na backendu
+
 import store from "@/store";
 import {
-  collection,
-  getDocs,
-  addDoc,
   doc,
-  getDoc,
   db,
   updateDoc,
-  arrayUnion,
-  arrayRemove,
-  onSnapshot,
   getAuth,
   updateEmail,
   updatePassword,
@@ -250,6 +175,7 @@ export default {
   data() {
     return {
       store,
+      // snackbar data
       snackbar: false,
       text: "",
       // form data
@@ -284,11 +210,12 @@ export default {
         await updateDoc(userRef, {
           userName: this.newUsername,
         });
+        this.newUsername = null;
       } catch (error) {
         console.log("changeUsername error-> ", error);
       }
-      //this.closeDialogSingleList();
     },
+
     //treba dodat da ponovo autentificira za ovo
     async changePassword() {
       const auth = getAuth();
@@ -298,7 +225,11 @@ export default {
       updatePassword(user, this.newPassword)
         .then(() => {
           // Update successful.
+          this.text = "Password updated succesfuly!";
+          this.snackbar = true;
           console.log("Password updated!");
+          this.newPassword = null;
+          this.newPasswordRepeat = null;
         })
         .catch((error) => {
           // An error ocurred
@@ -307,6 +238,7 @@ export default {
           console.log("Password not updated! error->", error);
         });
     },
+
     //treba dodat da ponovo autentificira za ovo
     async changeEmail() {
       const auth = getAuth();
@@ -314,6 +246,8 @@ export default {
       await updateEmail(user, this.newEmail)
         .then(async () => {
           // Email updated!
+          this.text = "Email updated succesfuly!";
+          this.snackbar = true;
 
           console.log("Email updated!");
           try {
@@ -322,14 +256,14 @@ export default {
               email: this.newEmail,
             });
           } catch (error) {
-            this.text = "Try logout and login again to use this feature";
-            this.snackbar = true;
             console.log(" error-> ", error);
           }
           this.newEmail = null;
         })
         .catch((error) => {
           // An error occurred
+          this.text = "Try logout and login again to use this feature";
+          this.snackbar = true;
 
           console.log("Erorr email not updated!", error);
         });

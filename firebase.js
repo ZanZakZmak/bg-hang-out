@@ -26,7 +26,7 @@ import {
   updateEmail,
   updatePassword,
 } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -78,4 +78,8 @@ export {
   signInWithEmailAndPassword,
   updateEmail,
   updatePassword,
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
 };

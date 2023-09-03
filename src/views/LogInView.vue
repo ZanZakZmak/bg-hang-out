@@ -21,66 +21,42 @@
                 dense
                 label="Password"
                 clearble
-                :append-icon="showIcon ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
-                :type="showIcon ? 'text' : 'password'"
                 outlined
               ></v-text-field>
             </v-form>
-            <!--<v-btn
-							@click="openDialog"
-							class="link-left"
-							text
-							x-small
-							color="blue">
-							Forgot password?
-						</v-btn>-->
+
+            <v-card-subtitle
+              >Alredy have an account go to
+              <v-chip @click="goToRegister()" color="blue">log in</v-chip>
+            </v-card-subtitle>
           </v-card-text>
           <v-card-actions class="card-actions">
-            <v-btn @click="logIn" :disabled="isButtonDisabled" outlined>
-              OK
-            </v-btn>
+            <v-btn @click="logIn" :disabled="!valid" outlined> OK </v-btn>
           </v-card-actions>
         </v-card>
-        <!--<v-dialog
-					width="300px"
-					outlined
-					persistent
-					v-model="passwordIssuesDialog">
-					<v-card class="card-border">
-						<v-card-title>E-mail</v-card-title>
-						<v-card-subtitle>
-							Please enter you e-mail
-						</v-card-subtitle>
-						<v-card-text>
-							<v-text-field
-								v-model="emailForPassword"
-								dense
-								label="Email"
-								clearble
-								type="text"
-								:rules="[rules.required, rules.email]"
-								outlined></v-text-field>
-						</v-card-text>
-						<v-card-actions class="card-actions">
-							<v-btn
-								class="btn-right-margin"
-								color="red darken-3"
-								outlined
-								text
-								small
-								@click="closeDialog">
-								CLOSE
-							</v-btn>
-							<v-btn
-								outlined
-								text
-								@click="resetPassword(emailForPassword)">
-								SEND
-							</v-btn>
-						</v-card-actions>
-					</v-card>
-				</v-dialog>-->
+        <!--snacbar warning-->
+        <template>
+          <div class="text-center ma-2">
+            <v-snackbar v-model="snackbar" timeout="3000" color="red">
+              {{ text }}
+
+              <template v-slot:action="{ attrs }">
+                <v-btn
+                  color="black"
+                  text
+                  v-bind="attrs"
+                  @click="
+                    snackbar = false;
+                    text = '';
+                  "
+                >
+                  Close
+                </v-btn>
+              </template>
+            </v-snackbar>
+          </div>
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -97,8 +73,10 @@ export default {
       valid: true,
       email: null,
       password: null,
-      isButtonDisabled: true,
-      showIcon: true,
+      // snackbar data
+      snackbar: false,
+      text: "",
+
       rules: {
         required: (value) => !!value || "Required.",
         min: (v) => v?.length >= 6 || "Min 6 characters",
@@ -112,18 +90,7 @@ export default {
   mounted() {
     console.log("na loginu sam");
   },
-  // mora watch jer inaće ne radi poziv kako treba
-  watch: {
-    valid: function (isValid) {
-      this.isButtonDisabled = !isValid;
-    },
-  },
-  /*computed: {
-    setButton: function () {
-      console.log("nepozivam se");
-      this.isButtonDisabled = !this.valid;
-    },
-  },*/
+
   methods: {
     logIn() {
       const email = this.email;
@@ -139,7 +106,12 @@ export default {
           const errorCode = error.code;
           const errorMessage = error.message;
           console.log(error, errorCode, errorMessage);
+          this.text = "Wrong email or Password";
+          this.snackbar = true;
         });
+    },
+    goToRegister() {
+      this.$router.push(`/Register`);
     },
   },
 };

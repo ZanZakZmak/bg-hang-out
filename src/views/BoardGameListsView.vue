@@ -65,7 +65,6 @@
         <h1>MY Lists</h1>
         <v-divider class="mb-7"></v-divider>
         <v-row>
-          <!--cange to bgLists and bgListId-->
           <v-card
             class="mx-auto mb-4"
             width="300"
@@ -73,10 +72,8 @@
             v-for="list in bgLists"
             :key="list.bgListId"
           >
-            <!--<v-img :src="list.bgInfo.bgImage" height="150px"></v-img>-->
-
             <v-card-title align="center" justify="center">
-              heloo {{ list.name }}
+              {{ list.name }}
               <v-spacer></v-spacer>
               <v-btn
                 fab
@@ -89,28 +86,9 @@
                 <v-icon>mdi mdi-close-thick</v-icon>
               </v-btn>
             </v-card-title>
-            <v-card-subtitle align="center" justify="center">
-              heloo {{ list.name }}
-            </v-card-subtitle>
 
             <v-divider></v-divider>
 
-            <!--<v-divider></v-divider>
-            <v-card-subtitle>Curently joined </v-card-subtitle>
-            <v-card-subtitle class="pa-0 ma-1">
-              <v-chip
-              class="ma-2"
-              color="teal darken-4"
-              v-for="person in list.joinedPlayers"
-              :key="person.guestId"
-            >
-              <v-avatar left>
-                <v-icon>mdi-account-circle</v-icon>
-              </v-avatar>
-              {{ person.userName }}
-            </v-chip>
-            </v-card-subtitle>
-            <v-divider></v-divider>-->
             <v-card-subtitle align="center" justify="center"
               >Description</v-card-subtitle
             >
@@ -171,7 +149,7 @@ export default {
       descriptionForm: null,
     };
   },
-  //mozda se moze rjesiti sa computed
+
   watch: {
     "store.storeData.userInfo.userId": function () {
       console.log("store mi se promjenio ", store);
@@ -180,75 +158,89 @@ export default {
     },
   },
   methods: {
-    //dobijem podatke arr id i za svakog zovem get list i spremam u arr u data
     async getLists(userId) {
       if (userId != "") {
-        const docRef = doc(db, "users", userId);
-        const docSnap = await getDoc(docRef);
+        try {
+          const docRef = doc(db, "users", userId);
+          const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          //console.log("Document bglist data:", docSnap.data());
-          this.bgLists = [];
-          //foreach na listi
-          docSnap.data().bgLists.forEach(async (listId) => {
-            this.bgLists.push(await this.getSingleList(listId));
-          });
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-          //error funkciju napraviti
-          return null;
+          if (docSnap.exists()) {
+            this.bgLists = [];
+
+            docSnap.data().bgLists.forEach(async (listId) => {
+              this.bgLists.push(await this.getSingleList(listId));
+            });
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+
+            return null;
+          }
+        } catch (error) {
+          console.log("Problem pri dohvatu listi eror->", error);
         }
       } else {
         console.log("sacekaj store se nije refa");
       }
     },
     async getSingleList(listId) {
-      const docRef = doc(db, "bgLists", listId);
-      const docSnap = await getDoc(docRef);
+      try {
+        const docRef = doc(db, "bgLists", listId);
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        //console.log("Document bglist data:", docSnap.data());
-        return {
-          bgListId: listId,
-          name: docSnap.data().name,
-          description: docSnap.data().description,
-          //bgList: await this.getBoardGames(docSnap.data().arrBoardGames),
-        };
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such document!");
-        //error funkciju napraviti
-        return null;
+        if (docSnap.exists()) {
+          //console.log("Document bglist data:", docSnap.data());
+          return {
+            bgListId: listId,
+            name: docSnap.data().name,
+            description: docSnap.data().description,
+            //bgList: await this.getBoardGames(docSnap.data().arrBoardGames),
+          };
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+          //error funkciju napraviti
+          return null;
+        }
+      } catch (error) {
+        console.log("dohvat pojedine liste eror->", error);
       }
     },
-    //#add new list ads to lists and -to userlist update? (name, description, arrBoardGameId)
+
     async addList(userId) {
-      const userRef = doc(db, "users", store.storeData.userInfo.userId);
-      // Add a new document with a generated id.
-      const docRef = await addDoc(collection(db, "bgLists"), {
-        createdUserId: store.storeData.userInfo.userId,
-        name: this.nameForm,
-        description: this.descriptionForm,
-        arrBoardGames: [],
-      });
+      try {
+        const userRef = doc(db, "users", store.storeData.userInfo.userId);
+        // Add a new document with a generated id.
+        const docRef = await addDoc(collection(db, "bgLists"), {
+          createdUserId: store.storeData.userInfo.userId,
+          name: this.nameForm,
+          description: this.descriptionForm,
+          arrBoardGames: [],
+        });
 
-      await updateDoc(userRef, {
-        bgLists: arrayUnion(docRef.id),
-      });
+        await updateDoc(userRef, {
+          bgLists: arrayUnion(docRef.id),
+        });
 
-      console.log("Document written with ID: ", docRef.id);
+        console.log("Document written with ID: ", docRef.id);
 
-      this.closeDialogList();
+        this.closeDialogList();
+      } catch (error) {
+        console.log("dodavanje liste eror->", error);
+      }
     },
-    // delete from list colection and remove from users lists idlist idusera
-    async deleteList(listId, userId) {
-      const userRef = doc(db, "users", userId);
-      await deleteDoc(doc(db, "bgLists", listId));
 
-      await updateDoc(userRef, {
-        bgLists: arrayRemove(listId),
-      });
+    async deleteList(listId, userId) {
+      try {
+        const userRef = doc(db, "users", userId);
+        await deleteDoc(doc(db, "bgLists", listId));
+
+        await updateDoc(userRef, {
+          bgLists: arrayRemove(listId),
+        });
+      } catch (error) {
+        console.log("delete eror->", error);
+      }
     },
 
     goToList(listId) {
@@ -264,13 +256,6 @@ export default {
 
   created() {
     onSnapshot(collection(db, "users"), async (collection) => {
-      /*
-      collection.forEach((snap) => {
-        console.log("Current data: ", snap.data());
-      }); 
-      console.log("Current data testiranje ");
-      //this.sessionsFilterd = this.sessions;
-      */
       console.log("ja snepshotam");
       await this.getLists(store.storeData.userInfo.userId);
     });

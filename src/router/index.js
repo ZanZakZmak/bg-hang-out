@@ -1,25 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import store from "@/store.js";
 
 Vue.use(VueRouter);
 
 const routes = [
-  {
-    path: "/home",
-    name: "home-view",
-    component: HomeView,
-  },
-  {
-    path: "/about",
-    name: "about-view",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
-  },
   {
     path: "/register",
     name: "register-view",
@@ -80,6 +65,18 @@ const routes = [
 
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/BoardGamesView.vue"),
+    meta: {
+      needsUser: true,
+    },
+  },
+  {
+    path: "/board-games/:id",
+    name: "board-game-single-view",
+
+    component: () =>
+      import(
+        /* webpackChunkName: "about" */ "../views/BoardGameSingleView.vue"
+      ),
     meta: {
       needsUser: true,
     },

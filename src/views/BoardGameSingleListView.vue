@@ -15,7 +15,6 @@
         </v-card>
         <v-divider class="mb-7"></v-divider>
         <v-row>
-          <!--cange to bgLists and bgListId-->
           <v-card
             class="mx-auto mb-4"
             width="300"
@@ -25,6 +24,13 @@
             :key="boardgame.bgId"
           >
             <v-card-title align="center" justify="center">
+              <v-btn
+                color="teal lighten-3"
+                icon
+                @click="goToBoardGame(boardgame.bgId)"
+              >
+                <v-icon>mdi mdi-open-in-new</v-icon>
+              </v-btn>
               <v-spacer></v-spacer>
               <v-btn
                 fab
@@ -128,17 +134,7 @@ import {
   arrayRemove,
   onSnapshot,
 } from "../../firebase.js";
-//!!! ako budem raddio bg single vue onda ruter funkciju ovdje
-//napravit listu moze se pokušat rješit problem od refresha kao i prije (nema vremena za alternativu)
-//liste to --> listu terba napravit da se prosljedi id i tako loada nova stranica ruter pharams?? možda
 
-//complex
-//make it a subcollection #add new list ads to sub and -to user? (name, description, arrBoardGameId)
-//make a list profile vue pass data via ruter pharams? # remove bg update array (add bg to list here or in board games )
-
-//simple
-//make a cuple predetirmened lists (owned, played) and fill them with bgIds no need for a sub collection
-//no params two lists are displayed on page #remove bg from list
 export default {
   name: "BoardGameSingleList",
   components: {},
@@ -160,49 +156,56 @@ export default {
   },
   methods: {
     async getList() {
-      const docRef = doc(db, "bgLists", this.RouteID);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        console.log("Document bglist data:", docSnap.data());
-        return {
-          createdUserId: "ek2aEbcOEsWxUJC7pHX3Pd1kuCO2",
-          name: docSnap.data().name,
-          description: docSnap.data().description,
-          bgList: await this.getBoardGames(docSnap.data().arrBoardGames),
-        };
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such document!");
-        //error funkciju napraviti
-        return null;
-      }
-    },
-    async getBoardGames(arrBgId) {
-      let arrBg = [];
-      arrBgId.forEach(async (idBoardGame) => {
-        const docRef = doc(db, "boardGames", idBoardGame);
+      try {
+        const docRef = doc(db, "bgLists", this.RouteID);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          //console.log("Document player data:", docSnap.data());  edition  playTime categories numberofPlayers
-          arrBg.push({
-            bgId: docSnap.id,
-            bgName: docSnap.data().bgName,
-            bgImage: docSnap.data().bgImageUrl,
-            bgEdition: docSnap.data().edition,
-            bgPlayTime: docSnap.data().playTime,
-            bgCategories: docSnap.data().categories,
-            bgNumberofPlayers: docSnap.data().numberofPlayers,
-          });
+          console.log("Document bglist data:", docSnap.data());
+          return {
+            createdUserId: "ek2aEbcOEsWxUJC7pHX3Pd1kuCO2",
+            name: docSnap.data().name,
+            description: docSnap.data().description,
+            bgList: await this.getBoardGames(docSnap.data().arrBoardGames),
+          };
         } else {
           // docSnap.data() will be undefined in this case
           console.log("No such document!");
+          //error funkciju napraviti
+          return null;
         }
-      });
-      return arrBg;
+      } catch (error) {
+        console.log("getList error-> ", error);
+      }
     },
-    //!!!# add board game
+    async getBoardGames(arrBgId) {
+      try {
+        let arrBg = [];
+        arrBgId.forEach(async (idBoardGame) => {
+          const docRef = doc(db, "boardGames", idBoardGame);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            //console.log("Document player data:", docSnap.data());  edition  playTime categories numberofPlayers
+            arrBg.push({
+              bgId: docSnap.id,
+              bgName: docSnap.data().bgName,
+              bgImage: docSnap.data().bgImageUrl,
+              bgEdition: docSnap.data().edition,
+              bgPlayTime: docSnap.data().playTime,
+              bgCategories: docSnap.data().categories,
+              bgNumberofPlayers: docSnap.data().numberofPlayers,
+            });
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        });
+        return arrBg;
+      } catch (error) {
+        console.log("getBoardGames error-> ", error);
+      }
+    },
 
     async addBoardGame(BgId, listId) {
       try {
@@ -227,41 +230,37 @@ export default {
       }
     },
     async getAllBoardGames() {
-      //this.boardGames = [...store.storeData.boardgames];
-      //use map to order data
-      const querySnapshot = await getDocs(collection(db, "boardGames"));
-      querySnapshot.forEach((doc) => {
-        this.dialogBgOptions.push({
-          text: doc.data().bgName,
-          value: doc.id,
+      try {
+        const querySnapshot = await getDocs(collection(db, "boardGames"));
+        querySnapshot.forEach((doc) => {
+          this.dialogBgOptions.push({
+            text: doc.data().bgName,
+            value: doc.id,
+          });
         });
-      });
-      querySnapshot.forEach((doc) => {
+        /*querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
-      });
+      });*/
+      } catch (error) {
+        console.log("u dohvatu Board Game error-> ", error);
+      }
     },
     closeDialogSingleList() {
       this.dialog = false;
       this.bgIdForm = null;
     },
+    goToBoardGame(boardGameId) {
+      this.$router.push(`/board-games/${boardGameId}`);
+    },
   },
   created() {
     onSnapshot(collection(db, "bgLists"), async (collection) => {
-      /*
-      collection.forEach((snap) => {
-        console.log("Current data: ", snap.data());
-      }); 
-      console.log("Current data testiranje ");
-      //this.sessionsFilterd = this.sessions;
-      */
       console.log("ja snepshotam");
       this.listInfo = await this.getList();
     });
   },
   async mounted() {
-    console.log(this.RouteID);
-    //this.listInfo = await this.getList();
     await this.getAllBoardGames();
   },
 };

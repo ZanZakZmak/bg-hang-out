@@ -25,18 +25,6 @@
               <v-form v-model="formValid">
                 <v-container>
                   <v-row>
-                    <!--
-                    title
-                    bg id
-                    date
-                    time
-                    num of players he wants
-                    description-- notes?
-                    comunication link
-                    ---meta
-                    user info ID
-                    timestamp?
-                  -->
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
                         label="Title*"
@@ -56,7 +44,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="dateForm"
-                            label="Picker without buttons"
+                            label="Picker without buttons*"
                             prepend-icon="mdi-calendar"
                             readonly
                             v-bind="attrs"
@@ -85,7 +73,7 @@
                         <template v-slot:activator="{ on, attrs }">
                           <v-text-field
                             v-model="timeForm"
-                            label="Picker in menu"
+                            label="Picker in menu*"
                             prepend-icon="mdi-clock-time-four-outline"
                             readonly
                             v-bind="attrs"
@@ -131,7 +119,7 @@
                       <v-autocomplete
                         v-model="bgIdForm"
                         :items="dialogBgOptions"
-                        label="Board game"
+                        label="Board game*"
                         :rules="[rules.required]"
                       ></v-autocomplete>
                     </v-col>
@@ -154,7 +142,7 @@
                 Close
               </v-btn>
               <v-btn
-                :disabled="isFormButtonDisabled"
+                :disabled="!formValid"
                 color="blue darken-1"
                 text
                 @click="addNewSession()"
@@ -172,13 +160,12 @@
     <!--content start-->
     <v-container fill-height fluid>
       <v-row>
-        <v-col cols="9">
-          <!--width="auto" full width za uredit kartice na kraju-->
+        <v-col cols="12" sm="9" md="9" xs="12">
           <!--ELEM session card-->
           <v-row>
             <v-card
               class="mx-auto mb-4"
-              max-width="400"
+              width="400"
               dark
               v-for="session in sessionsFilterd"
               :key="session.seshId"
@@ -189,22 +176,31 @@
               <v-card-title> {{ session.title }} </v-card-title>
 
               <v-card-subtitle align="center" justify="center">
-                Board Game {{ session.bgInfo.bgName }}
+                <v-chip>
+                  {{ session.bgInfo.bgName }}
+                </v-chip>
+                <v-btn
+                  color="teal lighten-3"
+                  icon
+                  @click="goToBoardGame(session.bgInfo.bgId)"
+                >
+                  <v-icon>mdi mdi-open-in-new</v-icon>
+                </v-btn>
               </v-card-subtitle>
+
               <v-divider></v-divider>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >Date: {{ session.date }}</v-list-item-title
+                  <v-list-item-title>
+                    Date: <v-chip>{{ session.date }}</v-chip>
+                  </v-list-item-title>
+                  <v-list-item-title>
+                    Time:
+                    <v-chip> {{ session.time }} </v-chip></v-list-item-title
                   >
-                  <v-list-item-title
-                    >Time: {{ session.time }}</v-list-item-title
-                  >
-                  <v-list-item-title
-                    >Location: {{ session.location }}</v-list-item-title
-                  >
-                  <v-divider inset></v-divider>
-                  <v-list-item-subtitle>Secondary text</v-list-item-subtitle>
+                  <v-list-item-title>
+                    Location: <v-chip> {{ session.location }} </v-chip>
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-divider></v-divider>
@@ -225,13 +221,12 @@
               </v-card-subtitle>
               <v-divider></v-divider>
               <v-card-subtitle>Aditional notes</v-card-subtitle>
+              <v-card color="grey darken-3" class="ma-2">
+                <v-card-subtitle style="max-height: 100px; overflow-y: auto">
+                  {{ session.notes }}
+                </v-card-subtitle>
+              </v-card>
 
-              <v-card-subtitle style="max-height: 100px; overflow-y: auto">
-                {{ session.notes }}
-              </v-card-subtitle>
-              <v-container>
-                <v-row> <v-col>helooo</v-col> </v-row>
-              </v-container>
               <v-divider></v-divider>
               <v-chip
                 v-for="item in session.bgInfo.bgCategories"
@@ -245,11 +240,12 @@
               <v-spacer></v-spacer>
               <v-card-actions class="justify-end">
                 <v-card-subtitle
-                  >created by: {{ session.createdBy }} at
-                  {{ session.timeStamp }}</v-card-subtitle
+                  >By {{ session.createdBy }}
+                  {{ formatTimestamp(session.timeStamp) }}</v-card-subtitle
                 >
                 <v-spacer></v-spacer>
                 <v-btn
+                  color="teal darken-1"
                   @click="
                     joinSession(
                       session.seshId,
@@ -294,51 +290,28 @@
           </v-row>
         </v-col>
 
-        <v-col cols="3" align="center" justify="center">
+        <v-col cols="12" sm="3" md="3" xs="12" align="center" justify="center">
           <!--ELEM Filter card za sessions-->
           <v-card dark height="auto" width="250" class="pa-3">
             <!--korak jedan primitivni interface za filtere-->
             <v-card-title>Filers</v-card-title>
             <v-divider></v-divider>
 
-            <v-menu
-              v-model="menu3"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              left
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="picker"
-                  label="Picker without buttons"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="picker"
-                @input="menu3 = false"
-              ></v-date-picker>
-            </v-menu>
-
-            <!--za ovo ce trebat promjeniti format iz stringa u arr sa dva clana numericka-->
             <v-card-subtitle>Number of players</v-card-subtitle>
-            <!--vrjeme je broj naj lakše vidjet dali upisuje ili ima opcije ponuđene-->
-            <v-text-field label="Min number of players" type="number" />
-            <v-text-field label="Max number of players" type="number" />
+
+            <v-text-field
+              v-model="filterPlayersNum"
+              label="number of players"
+              type="number"
+            />
             <v-divider></v-divider>
             <v-card-subtitle>Duration of gameplay</v-card-subtitle>
 
             <!--kategorije su interesantne napravit sa jednom ili više odabira-->
             <v-select
               v-model="filterTime"
-              :items="[30, 60, 120, 180, 240]"
-              label="under ect. min"
+              :items="[30, 60, 120, 180, 240, 300, 600]"
+              label="under selected min"
             ></v-select>
             <v-divider></v-divider>
 
@@ -371,20 +344,48 @@
               solo
             ></v-select>
             <v-card-actions>
-              <v-btn @click="filterSessions()">filter</v-btn>
-              <v-btn @click="clearFilters()">clear filter</v-btn>
+              <v-btn color="red darken-1" @click="clearFilters()"
+                >clear filter</v-btn
+              >
+              <v-spacer></v-spacer>
+              <v-btn color="teal darken-1" @click="filterSessions()"
+                >filter</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
     <!--end-->
+    <!--snacbar warning-->
+    <template>
+      <div class="text-center ma-2">
+        <v-snackbar v-model="snackbar" timeout="3000" color="red">
+          {{ text }}
+
+          <template v-slot:action="{ attrs }">
+            <v-btn
+              color="black"
+              text
+              v-bind="attrs"
+              @click="
+                snackbar = false;
+                text = '';
+              "
+            >
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 // !!! popraviti svugdje di piše session u session promjeniti form za add  drugi put ne radi
 import store from "@/store";
+import moment from "moment";
 import {
   collection,
   getDocs,
@@ -408,62 +409,18 @@ export default {
     return {
       store,
       dialog: false,
-      filterdBoardGames: [1, 2, 3],
-      sessions: [
-        {
-          seshId: "124355",
-          title: "Dodite Zaigrat Nesto Strasno",
-          bgInfo: {
-            bgName: "Arkam Horror",
-            bgPlayTime: "50",
-            bgImage:
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbm7WgTB627ts3forXSbbJQnUB91qky4pQ7g&usqp=CAU",
-            bgCategories: ["area control", "wargame", "asimetric strategy"],
-          },
-          wantedPlayers: 4,
-          time: "20:30-23:30",
-          date: "03.05.2023",
-          location: "Pula",
-          createdBy: "meeeee",
-          timeStamp: "20:30-23:30 -03.05.2023",
-          joinedPlayers: [
-            {
-              guestId: "1",
-              userName: "markic",
-            },
-            {
-              guestId: "2",
-              userName: "sebastijankojejakiii",
-            },
-          ],
-        },
-        {
-          seshId: "124356",
-          title: "Dodite Zaigrat Nesto Strasno",
-          bgInfo: {
-            bgName: "Arkam Horror",
-            bgPlayTime: "110",
-            bgImage:
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbm7WgTB627ts3forXSbbJQnUB91qky4pQ7g&usqp=CAU",
-            bgCategories: ["area control", "wargame", "asimetric strategy"],
-          },
-          wantedPlayers: 4,
-          time: "20:30-23:30",
-          date: "03.05.2023",
-          location: "Pula",
-          createdBy: "meeeee",
-          timeStamp: "20:30-23:30 -03.05.2023",
-        },
-      ],
+
+      sessions: [],
       sessionsFilterd: [],
       dialogBgOptions: [],
       //form
+      //u false
       formValid: true,
       isFormButtonDisabled: true,
       rules: {
         required: (value) => !!value || "Required.",
       },
-      //nead to actualy make it a form and have validation
+
       menu1: false,
       menu2: false,
       titleForm: null,
@@ -477,17 +434,12 @@ export default {
       ComunicationLinkForm: null,
       locationForm: null,
       //filters
-      //date
-      filterDate: null,
-      //duration
+      filterPlayersNum: null,
       filterTime: null,
-      //by categories
       filterCategories: null,
-      //vuetify
-      menu3: false,
-      picker: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      // snackbar data
+      snackbar: false,
+      text: "",
     };
   },
   watch: {
@@ -495,151 +447,143 @@ export default {
       this.searchSession();
 
       //pozvati filter
-      //this.filterBoardGames();
-    },
-    formValid: function (isValid) {
-      this.isFormButtonDisabled = !isValid;
-    },
-    picker: function () {
-      console.log(typeof this.picker);
+      this.filterSessions();
     },
   },
   methods: {
-    //dohvat sesija sa baze 1693606186430
     async getSessions() {
-      const q = query(collection(db, "sessions"), orderBy("timeStamp"));
+      try {
+        const q = query(
+          collection(db, "sessions"),
+          orderBy("timeStamp", "desc")
+        );
 
-      const querySnapshot = await getDocs(q);
-      this.sessions = [];
-      querySnapshot.forEach(async (doc) => {
-        this.sessions.push({
-          seshId: doc.id,
-          title: doc.data().title,
-          bgInfo: await this.getBoardGame(doc.data().bgID),
-          wantedPlayers: doc.data().wantedPlayers,
-          time: doc.data().Time,
-          date: doc.data().Date,
-          location: doc.data().location,
-          createdBy: doc.data().createdBy,
-          createdByID: doc.data().createdByID,
-          timeStamp: doc.data().timeStamp,
-          joinedPlayers: await this.getPlayers(doc.data().players),
-          show: doc.data().showIfNotFull,
-        });
-      });
-      /*
-      await onSnapshot(collection(db, "sessions"), (snap) => {
-        snap.forEach(async (doc) => {
+        const querySnapshot = await getDocs(q);
+        this.sessions = [];
+        querySnapshot.forEach(async (doc) => {
           this.sessions.push({
             seshId: doc.id,
             title: doc.data().title,
+            notes: doc.data().notes,
             bgInfo: await this.getBoardGame(doc.data().bgID),
             wantedPlayers: doc.data().wantedPlayers,
-            time: doc.data().timeDate,
-            date: "mene brisemo poslje",
+            time: doc.data().Time,
+            date: doc.data().Date,
             location: doc.data().location,
             createdBy: doc.data().createdBy,
             createdByID: doc.data().createdByID,
             timeStamp: doc.data().timeStamp,
             joinedPlayers: await this.getPlayers(doc.data().players),
-            show: false,
+            show: doc.data().showIfNotFull,
           });
         });
-      });
-      */
-      console.log("ja sam prvi");
+      } catch (error) {
+        console.log("getSessions eror->", error);
+      }
     },
 
     //dohvat info o bg u sesiji
     async getBoardGame(boardID) {
-      const docRef = doc(db, "boardGames", boardID);
-      const docSnap = await getDoc(docRef);
+      try {
+        const docRef = doc(db, "boardGames", boardID);
+        const docSnap = await getDoc(docRef);
 
-      if (docSnap.exists()) {
-        //console.log("Document bg data:", docSnap.data());
-        return {
-          bgName: docSnap.data().bgName,
-          bgImage: docSnap.data().bgImageUrl,
-          bgPlayTime: docSnap.data().playTime,
-          bgCategories: [...docSnap.data().categories],
-        };
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No such document!");
-        //error funkciju napraviti
-        return null;
+        if (docSnap.exists()) {
+          return {
+            bgId: docSnap.id,
+            bgName: docSnap.data().bgName,
+            bgImage: docSnap.data().bgImageUrl,
+            bgPlayTime: docSnap.data().playTime,
+            bgCategories: [...docSnap.data().categories],
+            numberofPlayers: docSnap.data().numberofPlayers,
+          };
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+
+          return null;
+        }
+      } catch (error) {
+        console.log("getBoardGame->", error);
       }
     },
     //dohvat info o igraćima u sesiji
     async getPlayers(arrPlayers) {
-      const returnArrPlayers = [];
-      arrPlayers.forEach(async (idPlayer) => {
-        const docRef = doc(db, "users", idPlayer);
-        const docSnap = await getDoc(docRef);
+      try {
+        const returnArrPlayers = [];
+        arrPlayers.forEach(async (idPlayer) => {
+          const docRef = doc(db, "users", idPlayer);
+          const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          //console.log("Document player data:", docSnap.data());
-          returnArrPlayers.push({
-            guestId: docSnap.id,
-            userName: docSnap.data().userName,
-          });
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      });
-      return returnArrPlayers;
+          if (docSnap.exists()) {
+            //console.log("Document player data:", docSnap.data());
+            returnArrPlayers.push({
+              guestId: docSnap.id,
+              userName: docSnap.data().userName,
+            });
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        });
+        return returnArrPlayers;
+      } catch (error) {
+        console.log("getPlayers eror->", error);
+      }
     },
     //kreiranje nove sesije dialog i polja uz selectore
     async getAllBoardGames() {
-      //this.boardGames = [...store.storeData.boardgames];
-      //use map to order data
-      const querySnapshot = await getDocs(collection(db, "boardGames"));
-      querySnapshot.forEach((doc) => {
-        this.dialogBgOptions.push({
-          text: doc.data().bgName,
-          value: doc.id,
+      try {
+        const querySnapshot = await getDocs(collection(db, "boardGames"));
+        querySnapshot.forEach((doc) => {
+          this.dialogBgOptions.push({
+            text: doc.data().bgName,
+            value: doc.id,
+          });
         });
-      });
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-      });
+      } catch (error) {
+        console.log("dohvat kategorija za dialog eror->", error);
+      }
+    },
+    formatTimestamp(timestamp) {
+      //.fromNow()
+      return moment(timestamp).fromNow();
     },
     async addNewSession() {
-      const userRef = doc(db, "users", store.storeData.userInfo.userId);
-      // Add a new document with a generated id.
-      const docRef = await addDoc(collection(db, "sessions"), {
-        createdBy: store.storeData.userInfo.userName,
-        createdByID: store.storeData.userInfo.userId,
-        //pogledat mozda zamjenit
-        isDisplay: true,
-        //sa ovime show
-        showIfNotFull: true,
-        location: this.locationForm,
-        title: this.titleForm,
-        Date: this.dateForm,
-        Time: this.timeForm,
-        timeStamp: Date.now(),
-        notes: this.notesform,
-        bgID: this.bgIdForm,
-        wantedPlayers: this.numOfPlayersForm,
-        ComunicationLink: this.ComunicationLinkForm,
-        players: [],
-      });
+      try {
+        const userRef = doc(db, "users", store.storeData.userInfo.userId);
+        // Add a new document with a generated id.
+        const docRef = await addDoc(collection(db, "sessions"), {
+          createdBy: store.storeData.userInfo.userName,
+          createdByID: store.storeData.userInfo.userId,
+          showIfNotFull: true,
+          location: this.locationForm,
+          title: this.titleForm,
+          Date: this.dateForm,
+          Time: this.timeForm,
+          timeStamp: Date.now(),
+          notes: this.notesform,
+          bgID: this.bgIdForm,
+          wantedPlayers: this.numOfPlayersForm,
+          ComunicationLink: this.ComunicationLinkForm,
+          players: [],
+        });
 
-      await updateDoc(userRef, {
-        createdSessions: arrayUnion(docRef.id),
-      });
+        await updateDoc(userRef, {
+          createdSessions: arrayUnion(docRef.id),
+        });
 
-      console.log("Document written with ID: ", docRef.id);
-      this.closeDialogSession();
+        console.log("Document written with ID: ", docRef.id);
+        this.closeDialogSession();
+      } catch (error) {
+        console.log("getPlayers eror->", error);
+      }
     },
     closeDialogSession() {
       this.dialog = false;
       this.clearSessionForm();
     },
-    //čišćenje forme jednostavno stavljanje vrijednosti na null promjeniti za dialog formu is buton maknut i stavit samo na isform
+
     clearSessionForm() {
       this.titleForm = null;
       this.dateForm = new Date(
@@ -653,8 +597,6 @@ export default {
       this.numOfPlayersForm = null;
       this.ComunicationLinkForm = null;
       this.locationForm = null;
-      this.formValid = true;
-      this.isFormButtonDisabled = true;
     },
     //dodavanjje igraća u sesiju
     async joinSession(sessionId, userID, createdBy, maxPlay, joined) {
@@ -664,34 +606,39 @@ export default {
         }) == undefined &&
         userID != createdBy
       ) {
-        const docRef = doc(db, "sessions", sessionId);
-        const userRef = doc(db, "users", userID);
-        // jos treba dodat funkciju u user liste na useru .
-        var temp = true;
-        if (maxPlay <= joined.length + 1) {
-          temp = false;
-        }
+        try {
+          const docRef = doc(db, "sessions", sessionId);
+          const userRef = doc(db, "users", userID);
+          // jos treba dodat funkciju u user liste na useru .
+          var temp = true;
+          if (maxPlay <= joined.length + 1) {
+            temp = false;
+          }
 
-        await updateDoc(docRef, {
-          players: arrayUnion(userID),
-          showIfNotFull: temp,
-        });
-        await updateDoc(userRef, {
-          joinedSessions: arrayUnion(sessionId),
-        });
+          await updateDoc(docRef, {
+            players: arrayUnion(userID),
+            showIfNotFull: temp,
+          });
+          await updateDoc(userRef, {
+            joinedSessions: arrayUnion(sessionId),
+          });
+        } catch (error) {
+          console.log("joinSession eror->", error);
+        }
       } else {
-        //zamjenit sa nekom vrstom alerta
-        console.log("već si u ovoj sesiji");
+        this.text = "You are already in this session";
+        this.snackbar = true;
       }
     },
 
-    //filtriranje kartica kopirat iz bg samo parametre odabrat(lokacija ,duljina trajanja u min dodat iz boardgame, kategorije)
+    //filtriranje kartica
     filterSessions() {
       this.searchSession();
       //kada je filter postoji
       if (
         this.filterTime != null ||
-        !(this.filterCategories == null || this.filterCategories.length == 0)
+        !(this.filterCategories == null || this.filterCategories.length == 0) ||
+        (this.filterPlayersNum != null && this.filterPlayersNum != "")
       ) {
         this.sessionsFilterd = this.sessionsFilterd.filter((element) => {
           var returnVal = true;
@@ -699,6 +646,17 @@ export default {
           // test case za vrijeme
           if (this.filterTime != null) {
             if (element.bgInfo.bgPlayTime > this.filterTime) {
+              returnVal = false;
+            }
+          }
+
+          //novi test case za playere
+          if (this.filterPlayersNum != null && this.filterPlayersNum != "") {
+            if (
+              element.bgInfo.numberofPlayers[0] <= this.filterPlayersNum &&
+              element.bgInfo.numberofPlayers[1] >= this.filterPlayersNum
+            ) {
+            } else {
               returnVal = false;
             }
           }
@@ -725,14 +683,13 @@ export default {
         });
       }
     },
-    //ciscenje filtera filter  na null
+    //ciscenje filtera
     clearFilters() {
       this.filterTime = null;
-      this.filterDate = null;
+      this.filterPlayersNum = null;
       this.filterCategories = null;
       this.searchSession();
     },
-    //potencijalno sort
 
     //searchanje kartica
     searchSession() {
@@ -747,31 +704,33 @@ export default {
             element.title
               .toLowerCase()
               .search(store.searchTerm.toLowerCase()) === -1
+          ) ||
+          !(
+            element.createdBy
+              .toLowerCase()
+              .search(store.searchTerm.toLowerCase()) === -1
+          ) ||
+          !(
+            element.location
+              .toLowerCase()
+              .search(store.searchTerm.toLowerCase()) === -1
           )
         );
       });
     },
+
+    goToBoardGame(boardGameId) {
+      this.$router.push(`/board-games/${boardGameId}`);
+    },
   },
   created() {
     onSnapshot(collection(db, "sessions"), (collection) => {
-      /*
-      collection.forEach((snap) => {
-        console.log("Current data: ", snap.data());
-      });
-      console.log("Current data testiranje ");
-      //this.sessionsFilterd = this.sessions;
-      */
       this.getSessions().then(() => {
-        //popraviti ovo je samo referenca inace ne zeli radit sa promise
         this.sessionsFilterd = this.sessions;
       });
     });
   },
   async mounted() {
-    /*this.getSessions().then(() => {
-      //popraviti ovo je samo referenca inace ne zeli radit sa promise
-      this.sessionsFilterd = this.sessions;
-    });*/
     this.getAllBoardGames();
   },
 };

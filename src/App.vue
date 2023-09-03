@@ -29,8 +29,7 @@ export default {
       store,
     };
   },
-  //add to input adisonal user data into store
-  //add to clear adisonal user data into store
+
   methods: {
     logOut() {
       const auth = getAuth();
@@ -50,6 +49,7 @@ export default {
       if (docSnap.exists()) {
         store.storeData.userInfo.userName = docSnap.data().userName;
         store.storeData.userInfo.userId = docSnap.id;
+        store.storeData.userInfo.userEmail = docSnap.data().email;
         console.log("Document data:", docSnap.data());
       } else {
         // docSnap.data() will be undefined in this case
